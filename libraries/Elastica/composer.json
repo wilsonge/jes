@@ -1,0 +1,10 @@
+{
+    "name": "wilsonge/elastica-joomla-library",
+    "homepage": "https://github.com/wilsonge/jes",
+    "license": "GPL-3.0+",
+    "version": "0.0.1",
+    "require": {
+        "php": ">=5.4",
+        "ruflin/elastica": "1.*"
+    }
+}

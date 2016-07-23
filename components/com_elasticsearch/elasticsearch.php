@@ -6,17 +6,12 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
-?>
-<?php
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
- 
-// import joomla controller library
-jimport('joomla.application.component.controller');
- 
+
 // Get an instance of the controller prefixed by ElasticSearch
-$controller = JController::getInstance('ElasticSearch');
+$controller = JControllerLegacy::getInstance('ElasticSearch');
  
 // Perform the Request task
 $input = JFactory::getApplication()->input;

@@ -6,32 +6,32 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
-?>
-<?php
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
- 
-// import Joomla controller library
-jimport('joomla.application.component.controller');
- 
+
 /**
  * General Controller of ElasticSearch component
+ *
+ * @since  1.0
  */
-class ElasticSearchController extends JController
+class ElasticSearchController extends JControllerLegacy
 {
-        /**
-         * display
-         *
-         * @return void
-         */
-        function display($cachable = false, $urlparams = false) 
-        {
-                // set default view if not set
-                $input = JFactory::getApplication()->input;
-                $input->set('view', $input->getCmd('view', 'default'));
-                
-                // call parent behavior
-                parent::display($cachable);
-        }
-        
+	/**
+	 * Typical view method for MVC based architecture
+	 *
+	 * @param   boolean  $cachable   If true, the view output will be cached
+	 * @param   array    $urlparams  An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+	 *
+	 * @return  static
+	 *
+	 * @since   1.0
+	 */
+	public function display($cachable = false, $urlparams = array())
+	{
+		// Set default view if not set
+		$this->input->set('view', $this->input->getCmd('view', 'default'));
+
+		return parent::display($cachable);
+	}
 }

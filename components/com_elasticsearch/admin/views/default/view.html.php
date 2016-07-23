@@ -10,10 +10,7 @@
 <?php
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
- 
-// import Joomla view library
-jimport('joomla.application.component.view');
- 
+
 // Load the ElasticSearch Conf.
 require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/config.php';
 
@@ -21,7 +18,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/config
 require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/render.php';
 
 
-class ElasticSearchViewDefault extends JView
+class ElasticSearchViewDefault extends JViewLegacy
 {
 	
         /**

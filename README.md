@@ -1,6 +1,8 @@
 JES - Extension ElasticSearch for Joomla!
 ===
 
+Forked and updated from the original located [here](https://github.com/crim-ca/jes) 
+
 An ElasticSearch extension for Joomla  
 **You absolutely need to have an ElasticSearch server if you want to use this extension.**  
 If you need further information about ElasticSearch you can go on their website:  

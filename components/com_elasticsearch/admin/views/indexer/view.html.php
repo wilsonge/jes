@@ -10,14 +10,11 @@
 <?php
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
- 
-// import Joomla view library
-jimport('joomla.application.component.view');
- 
+
 /**
  * ElasticSearch View
  */
-class ElasticSearchViewIndexer extends JView
+class ElasticSearchViewIndexer extends JViewLegacy
 {
 
         function display($tpl = null) 
