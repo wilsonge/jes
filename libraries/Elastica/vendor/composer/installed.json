@@ -41,46 +41,44 @@
     },
     {
         "name": "ruflin/elastica",
-        "version": "v1.4.3.0",
-        "version_normalized": "1.4.3.0",
+        "version": "3.2.1",
+        "version_normalized": "3.2.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ruflin/Elastica.git",
-            "reference": "bfa9363bf2aa62af5907135863661c6c78a68ee4"
+            "reference": "1f3513a3f347c64296a924b1e559d203a1470b2b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ruflin/Elastica/zipball/bfa9363bf2aa62af5907135863661c6c78a68ee4",
-            "reference": "bfa9363bf2aa62af5907135863661c6c78a68ee4",
+            "url": "https://api.github.com/repos/ruflin/Elastica/zipball/1f3513a3f347c64296a924b1e559d203a1470b2b",
+            "reference": "1f3513a3f347c64296a924b1e559d203a1470b2b",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.3",
+            "php": ">=5.4.0",
             "psr/log": "~1.0"
         },
         "require-dev": {
-            "fabpot/php-cs-fixer": "~1.4",
-            "munkie/elasticsearch-thrift-php": "1.4.*",
-            "phpunit/phpunit": "4.1.*"
+            "aws/aws-sdk-php": "~3.0",
+            "guzzlehttp/guzzle": "~6.0"
         },
         "suggest": {
+            "aws/aws-sdk-php": "Allow using IAM authentication with Amazon ElasticSearch Service",
             "egeloen/http-adapter": "Allow using httpadapter transport",
-            "guzzlehttp/guzzle": "Allow using guzzle 4.x as the http transport (Requires php 5.4)",
-            "monolog/monolog": "Logging request",
-            "munkie/elasticsearch-thrift-php": "Allow using thrift transport"
+            "guzzlehttp/guzzle": "Allow using guzzle 6 as the http transport (Requires php 5.5)",
+            "monolog/monolog": "Logging request"
         },
-        "time": "2015-02-17 19:57:36",
+        "time": "2016-06-15 06:16:11",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.4.x-dev"
+                "dev-master": "3.2.x-dev"
             }
         },
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "Elastica\\": "lib/Elastica/",
-                "Elastica\\Test\\": "test/lib/Elastica/Test/"
+                "Elastica\\": "lib/Elastica/"
             }
         },
         "notification-url": "https://packagist.org/downloads/",

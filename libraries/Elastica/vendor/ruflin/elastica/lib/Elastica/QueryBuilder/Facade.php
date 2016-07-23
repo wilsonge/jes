@@ -1,13 +1,11 @@
 <?php
-
 namespace Elastica\QueryBuilder;
 
 use Elastica\Exception\QueryBuilderException;
 
 /**
- * Facade for a specific DSL object
+ * Facade for a specific DSL object.
  *
- * @package Elastica
  * @author Manuel Andreo Garcia <andreo.garcia@googlemail.com>
  **/
 class Facade
@@ -23,7 +21,7 @@ class Facade
     private $_version;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param DSL     $dsl
      * @param Version $version
@@ -35,12 +33,14 @@ class Facade
     }
 
     /**
-     * Executes DSL methods
+     * Executes DSL methods.
      *
-     * @param $name
-     * @param  array                 $arguments
-     * @return mixed
+     * @param string $name
+     * @param array  $arguments
+     *
      * @throws QueryBuilderException
+     *
+     * @return mixed
      */
     public function __call($name, array $arguments)
     {

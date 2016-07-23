@@ -1,25 +1,22 @@
 <?php
-
 namespace Elastica\Query;
 
 use Elastica\Exception\InvalidException;
 
 /**
- * Fuzzy query
+ * Fuzzy query.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/fuzzy-query.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html
  */
 class Fuzzy extends AbstractQuery
 {
     /**
-     * Construct a fuzzy query
+     * Construct a fuzzy query.
      *
-     * @param  string                $fieldName Field name
-     * @param  string                $value     String to search for
-     * @return \Elastica\Query\Fuzzy Current object
+     * @param string $fieldName Field name
+     * @param string $value     String to search for
      */
     public function __construct($fieldName = null, $value = null)
     {
@@ -29,11 +26,12 @@ class Fuzzy extends AbstractQuery
     }
 
     /**
-     * Set field for fuzzy query
+     * Set field for fuzzy query.
      *
-     * @param  string                $fieldName Field name
-     * @param  string                $value     String to search for
-     * @return \Elastica\Query\Fuzzy Current object
+     * @param string $fieldName Field name
+     * @param string $value     String to search for
+     *
+     * @return $this
      */
     public function setField($fieldName, $value)
     {
@@ -48,11 +46,12 @@ class Fuzzy extends AbstractQuery
     }
 
     /**
-     * Set optional parameters on the existing query
+     * Set optional parameters on the existing query.
      *
-     * @param  string                $param option name
-     * @param  mixed                 $value Value of the parameter
-     * @return \Elastica\Query\Fuzzy Current object
+     * @param string $param option name
+     * @param mixed  $value Value of the parameter
+     *
+     * @return $this
      */
     public function setFieldOption($param, $value)
     {
@@ -64,15 +63,23 @@ class Fuzzy extends AbstractQuery
         $keyArray = array_keys($params);
         $params[$keyArray[0]][$param] = $value;
 
-        return $this->setparam($keyArray[0], $params[$keyArray[0]]);
+        return $this->setParam($keyArray[0], $params[$keyArray[0]]);
     }
 
     /**
      * Deprecated method of setting a field.
-     * @deprecated
+     *
+     * @deprecated Use setField and setFieldOption instead. This method will be removed in further Elastica releases
+     *
+     * @param $fieldName
+     * @param $args
+     *
+     * @return $this
      */
     public function addField($fieldName, $args)
     {
+        trigger_error('Query\Fuzzy::addField is deprecated. Use setField and setFieldOption instead. This method will be removed in further Elastica releases', E_USER_DEPRECATED);
+
         if (!array_key_exists('value', $args)) {
             throw new InvalidException('Fuzzy query can only support a single field.');
         }

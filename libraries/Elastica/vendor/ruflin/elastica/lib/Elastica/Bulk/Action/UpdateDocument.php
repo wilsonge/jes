@@ -1,14 +1,9 @@
 <?php
-
 namespace Elastica\Bulk\Action;
 
 use Elastica\Document;
-use Elastica\Script;
+use Elastica\Script\AbstractScript;
 
-/**
- * @package Elastica\Bulk\Action
- * @link http://www.elasticsearch.org/guide/reference/api/bulk/
- */
 class UpdateDocument extends IndexDocument
 {
     /**
@@ -18,8 +13,10 @@ class UpdateDocument extends IndexDocument
 
     /**
      * Set the document for this bulk update action.
-     * @param  \Elastica\Document                   $document
-     * @return \Elastica\Bulk\Action\UpdateDocument
+     *
+     * @param \Elastica\Document $document
+     *
+     * @return $this
      */
     public function setDocument(Document $document)
     {
@@ -43,13 +40,15 @@ class UpdateDocument extends IndexDocument
     }
 
     /**
-     * @param  \Elastica\Script                       $script
-     * @return \Elastica\Bulk\Action\AbstractDocument
+     * @param \Elastica\Script\AbstractScript $script
+     *
+     * @return $this
      */
-    public function setScript(Script $script)
+    public function setScript(AbstractScript $script)
     {
         parent::setScript($script);
 
+        // FIXME: can we throw away toArray cast?
         $source = $script->toArray();
 
         if ($script->hasUpsert()) {

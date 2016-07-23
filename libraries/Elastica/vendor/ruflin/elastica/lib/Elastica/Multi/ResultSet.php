@@ -1,83 +1,48 @@
 <?php
-
 namespace Elastica\Multi;
 
-use Elastica\Exception\InvalidException;
 use Elastica\Response;
 use Elastica\ResultSet as BaseResultSet;
-use Elastica\Search as BaseSearch;
 
 /**
  * Elastica multi search result set
- * List of result sets for each search request
+ * List of result sets for each search request.
  *
- * @category Xodoa
- * @package Elastica
  * @author munkie
  */
 class ResultSet implements \Iterator, \ArrayAccess, \Countable
 {
     /**
-     * Result Sets
+     * Result Sets.
      *
      * @var array|\Elastica\ResultSet[] Result Sets
      */
     protected $_resultSets = array();
 
     /**
-     * Current position
+     * Current position.
      *
      * @var int Current position
      */
     protected $_position = 0;
 
     /**
-     * Response
+     * Response.
      *
      * @var \Elastica\Response Response object
      */
     protected $_response;
 
     /**
-     * Constructs ResultSet object
+     * Constructs ResultSet object.
      *
-     * @param \Elastica\Response       $response
-     * @param array|\Elastica\Search[] $searches
+     * @param \Elastica\Response $response
+     * @param BaseResultSet[]
      */
-    public function __construct(Response $response, array $searches)
-    {
-        $this->rewind();
-        $this->_init($response, $searches);
-    }
-
-    /**
-     * @param  \Elastica\Response                   $response
-     * @param  array|\Elastica\Search[]             $searches
-     * @throws \Elastica\Exception\InvalidException
-     */
-    protected function _init(Response $response, array $searches)
+    public function __construct(Response $response, $resultSets)
     {
         $this->_response = $response;
-        $responseData = $response->getData();
-
-        if (isset($responseData['responses']) && is_array($responseData['responses'])) {
-            reset($searches);
-            foreach ($responseData['responses'] as $key => $responseData) {
-                $currentSearch = each($searches);
-
-                if ($currentSearch === false) {
-                    throw new InvalidException('No result found for search #'.$key);
-                } elseif (!$currentSearch['value'] instanceof BaseSearch) {
-                    throw new InvalidException('Invalid object for search #'.$key.' provided. Should be Elastica\Search');
-                }
-
-                $search = $currentSearch['value'];
-                $query = $search->getQuery();
-
-                $response = new Response($responseData);
-                $this->_resultSets[$currentSearch['key']] = new BaseResultSet($response, $query);
-            }
-        }
+        $this->_resultSets = $resultSets;
     }
 
     /**
@@ -89,7 +54,7 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * Returns response object
+     * Returns response object.
      *
      * @return \Elastica\Response Response object
      */
@@ -99,7 +64,7 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * There is at least one result set with error
+     * There is at least one result set with error.
      *
      * @return bool
      */
@@ -127,11 +92,10 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * @return void
      */
     public function next()
     {
-        $this->_position++;
+        ++$this->_position;
     }
 
     /**
@@ -151,7 +115,6 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * @return void
      */
     public function rewind()
     {
@@ -167,8 +130,9 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * @param  string|int $offset
-     * @return boolean    true on success or false on failure.
+     * @param string|int $offset
+     *
+     * @return bool true on success or false on failure.
      */
     public function offsetExists($offset)
     {
@@ -176,7 +140,8 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * @param  mixed $offset
+     * @param mixed $offset
+     *
      * @return mixed Can return all value types.
      */
     public function offsetGet($offset)
@@ -185,9 +150,8 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * @param  mixed $offset
-     * @param  mixed $value
-     * @return void
+     * @param mixed $offset
+     * @param mixed $value
      */
     public function offsetSet($offset, $value)
     {
@@ -199,8 +163,7 @@ class ResultSet implements \Iterator, \ArrayAccess, \Countable
     }
 
     /**
-     * @param  mixed $offset
-     * @return void
+     * @param mixed $offset
      */
     public function offsetUnset($offset)
     {

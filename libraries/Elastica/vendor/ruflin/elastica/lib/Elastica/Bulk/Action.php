@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Bulk;
 
 use Elastica\Bulk;
@@ -10,7 +9,7 @@ use Elastica\Type;
 class Action
 {
     const OP_TYPE_CREATE = 'create';
-    const OP_TYPE_INDEX  = 'index';
+    const OP_TYPE_INDEX = 'index';
     const OP_TYPE_DELETE = 'delete';
     const OP_TYPE_UPDATE = 'update';
 
@@ -52,8 +51,9 @@ class Action
     }
 
     /**
-     * @param  string                $type
-     * @return \Elastica\Bulk\Action
+     * @param string $type
+     *
+     * @return $this
      */
     public function setOpType($type)
     {
@@ -71,8 +71,9 @@ class Action
     }
 
     /**
-     * @param  array                 $metadata
-     * @return \Elastica\Bulk\Action
+     * @param array $metadata
+     *
+     * @return $this
      */
     public function setMetadata(array $metadata)
     {
@@ -98,8 +99,9 @@ class Action
     }
 
     /**
-     * @param  array                 $source
-     * @return \Elastica\Bulk\Action
+     * @param array $source
+     *
+     * @return $this
      */
     public function setSource($source)
     {
@@ -125,8 +127,9 @@ class Action
     }
 
     /**
-     * @param  string|\Elastica\Index $index
-     * @return \Elastica\Bulk\Action
+     * @param string|\Elastica\Index $index
+     *
+     * @return $this
      */
     public function setIndex($index)
     {
@@ -139,8 +142,9 @@ class Action
     }
 
     /**
-     * @param  string|\Elastica\Type $type
-     * @return \Elastica\Bulk\Action
+     * @param string|\Elastica\Type $type
+     *
+     * @return $this
      */
     public function setType($type)
     {
@@ -154,8 +158,9 @@ class Action
     }
 
     /**
-     * @param  string                $id
-     * @return \Elastica\Bulk\Action
+     * @param string $id
+     *
+     * @return $this
      */
     public function setId($id)
     {
@@ -165,8 +170,9 @@ class Action
     }
 
     /**
-     * @param  string                $routing
-     * @return \Elastica\Bulk\Action
+     * @param string $routing
+     *
+     * @return $this
      */
     public function setRouting($routing)
     {
@@ -211,7 +217,8 @@ class Action
     }
 
     /**
-     * @param  string $opType
+     * @param string $opType
+     *
      * @return bool
      */
     public static function isValidOpType($opType)

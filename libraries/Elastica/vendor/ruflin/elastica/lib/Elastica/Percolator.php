@@ -1,25 +1,22 @@
 <?php
-
 namespace Elastica;
 
 /**
- * Percolator class
+ * Percolator class.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/api/percolate/
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html
  */
 class Percolator
 {
-    const EXTRA_FILTER         = 'filter';
-    const EXTRA_QUERY          = 'query';
-    const EXTRA_SIZE           = 'size';
-    const EXTRA_TRACK_SCORES   = 'track_scores';
-    const EXTRA_SORT           = 'sort';
-    const EXTRA_FACETS         = 'facets';
-    const EXTRA_AGGS           = 'aggs';
-    const EXTRA_HIGHLIGHT      = 'highlight';
+    const EXTRA_FILTER = 'filter';
+    const EXTRA_QUERY = 'query';
+    const EXTRA_SIZE = 'size';
+    const EXTRA_TRACK_SCORES = 'track_scores';
+    const EXTRA_SORT = 'sort';
+    const EXTRA_AGGS = 'aggs';
+    const EXTRA_HIGHLIGHT = 'highlight';
 
     private $_extraRequestBodyOptions = array(
         self::EXTRA_FILTER,
@@ -27,20 +24,19 @@ class Percolator
         self::EXTRA_SIZE,
         self::EXTRA_TRACK_SCORES,
         self::EXTRA_SORT,
-        self::EXTRA_FACETS,
         self::EXTRA_AGGS,
         self::EXTRA_HIGHLIGHT,
     );
 
     /**
-     * Index object
+     * Index object.
      *
      * @var \Elastica\Index
      */
-    protected $_index = null;
+    protected $_index;
 
     /**
-     * Construct new percolator
+     * Construct new percolator.
      *
      * @param \Elastica\Index $index
      */
@@ -52,10 +48,11 @@ class Percolator
     /**
      * Registers a percolator query, with optional extra fields to include in the registered query.
      *
-     * @param  string                                               $name   Query name
-     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query  Query to add
-     * @param  array                                                $fields Extra fields to include in the registered query
-     *                                                                      and can be used to filter executed queries.
+     * @param string                                               $name   Query name
+     * @param string|\Elastica\Query|\Elastica\Query\AbstractQuery $query  Query to add
+     * @param array                                                $fields Extra fields to include in the registered query
+     *                                                                     and can be used to filter executed queries.
+     *
      * @return \Elastica\Response
      */
     public function registerQuery($name, $query, $fields = array())
@@ -69,8 +66,10 @@ class Percolator
     }
 
     /**
-     * Removes a percolator query
-     * @param  string             $name query name
+     * Removes a percolator query.
+     *
+     * @param string $name query name
+     *
      * @return \Elastica\Response
      */
     public function unregisterQuery($name)
@@ -81,22 +80,22 @@ class Percolator
     }
 
     /**
-     * Match a document to percolator queries
+     * Match a document to percolator queries.
      *
-     * @param  \Elastica\Document                                   $doc
-     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query  Query to filter the percolator queries which
-     *                                                                      are executed.
-     * @param  string                                               $type
-     * @param  array                                                $params Supports setting additional request body options to the percolate request.
-     *                                                                      [ Percolator::EXTRA_FILTER,
-     *                                                                      Percolator::EXTRA_QUERY,
-     *                                                                      Percolator::EXTRA_SIZE,
-     *                                                                      Percolator::EXTRA_TRACK_SCORES,
-     *                                                                      Percolator::EXTRA_SORT,
-     *                                                                      Percolator::EXTRA_FACETS,
-     *                                                                      Percolator::EXTRA_AGGS,
-     *                                                                      Percolator::EXTRA_HIGHLIGHT ]
-     * @return array                                                With matching registered queries.
+     * @param \Elastica\Document                                   $doc
+     * @param string|\Elastica\Query|\Elastica\Query\AbstractQuery $query  Query to filter the percolator queries which
+     *                                                                     are executed.
+     * @param string                                               $type
+     * @param array                                                $params Supports setting additional request body options to the percolate request.
+     *                                                                     [ Percolator::EXTRA_FILTER,
+     *                                                                     Percolator::EXTRA_QUERY,
+     *                                                                     Percolator::EXTRA_SIZE,
+     *                                                                     Percolator::EXTRA_TRACK_SCORES,
+     *                                                                     Percolator::EXTRA_SORT,
+     *                                                                     Percolator::EXTRA_AGGS,
+     *                                                                     Percolator::EXTRA_HIGHLIGHT ]
+     *
+     * @return array With matching registered queries.
      */
     public function matchDoc(Document $doc, $query = null, $type = 'type', $params = array())
     {
@@ -109,22 +108,22 @@ class Percolator
     }
 
     /**
-     * Percolating an existing document
+     * Percolating an existing document.
      *
-     * @param  string                                               $id
-     * @param  string                                               $type
-     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query  Query to filter the percolator queries which
-     *                                                                      are executed.
-     * @param  array                                                $params Supports setting additional request body options to the percolate request.
-     *                                                                      [ Percolator::EXTRA_FILTER,
-     *                                                                      Percolator::EXTRA_QUERY,
-     *                                                                      Percolator::EXTRA_SIZE,
-     *                                                                      Percolator::EXTRA_TRACK_SCORES,
-     *                                                                      Percolator::EXTRA_SORT,
-     *                                                                      Percolator::EXTRA_FACETS,
-     *                                                                      Percolator::EXTRA_AGGS,
-     *                                                                      Percolator::EXTRA_HIGHLIGHT ]
-     * @return array                                                With matching registered queries.
+     * @param string                                               $id
+     * @param string                                               $type
+     * @param string|\Elastica\Query|\Elastica\Query\AbstractQuery $query  Query to filter the percolator queries which
+     *                                                                     are executed.
+     * @param array                                                $params Supports setting additional request body options to the percolate request.
+     *                                                                     [ Percolator::EXTRA_FILTER,
+     *                                                                     Percolator::EXTRA_QUERY,
+     *                                                                     Percolator::EXTRA_SIZE,
+     *                                                                     Percolator::EXTRA_TRACK_SCORES,
+     *                                                                     Percolator::EXTRA_SORT,
+     *                                                                     Percolator::EXTRA_AGGS,
+     *                                                                     Percolator::EXTRA_HIGHLIGHT ]
+     *
+     * @return array With matching registered queries.
      */
     public function matchExistingDoc($id, $type, $query = null, $params = array())
     {
@@ -154,10 +153,11 @@ class Percolator
     }
 
     /**
-     * @param  string                                               $path
-     * @param  string|\Elastica\Query|\Elastica\Query\AbstractQuery $query] $query  [description]
-     * @param  array                                                $data
-     * @param  array                                                $params
+     * @param string                                               $path
+     * @param string|\Elastica\Query|\Elastica\Query\AbstractQuery $query] $query  [description]
+     * @param array                                                $data
+     * @param array                                                $params
+     *
      * @return array
      */
     protected function _percolate($path, $query, $data = array(), $params = array())
@@ -165,7 +165,7 @@ class Percolator
         // Add query to filter the percolator queries which are executed.
         if ($query) {
             $query = Query::create($query);
-            $data['query'] = $query->getQuery();
+            $data['query'] = $query->getQuery()->toArray();
         }
 
         $response = $this->getIndex()->getClient()->request($path, Request::GET, $data, $params);
@@ -179,7 +179,7 @@ class Percolator
     }
 
     /**
-     * Return index object
+     * Return index object.
      *
      * @return \Elastica\Index
      */

@@ -1,11 +1,10 @@
 <?php
-
 namespace Elastica\Aggregation;
 
 /**
- * Class ValueCount
- * @package Elastica\Aggregation
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-aggregations-metrics-valuecount-aggregation.html
+ * Class ValueCount.
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-valuecount-aggregation.html
  */
 class ValueCount extends AbstractAggregation
 {
@@ -20,9 +19,11 @@ class ValueCount extends AbstractAggregation
     }
 
     /**
-     * Set the field for this aggregation
-     * @param  string     $field the name of the document field on which to perform this aggregation
-     * @return ValueCount
+     * Set the field for this aggregation.
+     *
+     * @param string $field the name of the document field on which to perform this aggregation
+     *
+     * @return $this
      */
     public function setField($field)
     {

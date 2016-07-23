@@ -1,42 +1,36 @@
 <?php
-
 namespace Elastica\Filter;
 
 use Elastica\Exception\InvalidException;
 
+trigger_error('Deprecated: Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html', E_USER_DEPRECATED);
+
 /**
- * Terms filter
+ * Terms filter.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
- * @link http://www.elasticsearch.org/guide/reference/query-dsl/terms-filter.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-filter.html
+ * @deprecated Filters are deprecated. Use queries in filter context. See https://www.elastic.co/guide/en/elasticsearch/reference/2.0/query-dsl-filters.html
  */
 class Terms extends AbstractFilter
 {
     /**
-     * Terms
+     * Terms.
      *
      * @var array Terms
      */
     protected $_terms = array();
 
     /**
-     * Params
-     *
-     * @var array Params
-     */
-    protected $_params = array();
-
-    /**
-     * Terms key
+     * Terms key.
      *
      * @var string Terms key
      */
     protected $_key = '';
 
     /**
-     * Creates terms filter
+     * Creates terms filter.
      *
      * @param string $key   Terms key
      * @param array  $terms Terms values
@@ -47,11 +41,12 @@ class Terms extends AbstractFilter
     }
 
     /**
-     * Sets key and terms for the filter
+     * Sets key and terms for the filter.
      *
-     * @param  string                 $key   Terms key
-     * @param  array                  $terms Terms for the query.
-     * @return \Elastica\Filter\Terms
+     * @param string $key   Terms key
+     * @param array  $terms Terms for the query.
+     *
+     * @return $this
      */
     public function setTerms($key, array $terms)
     {
@@ -62,13 +57,15 @@ class Terms extends AbstractFilter
     }
 
     /**
-     * Set the lookup parameters for this filter
-     * @param  string                       $key     terms key
-     * @param  string|\Elastica\Type        $type    document type from which to fetch the terms values
-     * @param  string                       $id      id of the document from which to fetch the terms values
-     * @param  string                       $path    the field from which to fetch the values for the filter
-     * @param  string|array|\Elastica\Index $options An array of options or the index from which to fetch the terms values. Defaults to the current index.
-     * @return \Elastica\Filter\Terms       Filter object
+     * Set the lookup parameters for this filter.
+     *
+     * @param string                       $key     terms key
+     * @param string|\Elastica\Type        $type    document type from which to fetch the terms values
+     * @param string                       $id      id of the document from which to fetch the terms values
+     * @param string                       $path    the field from which to fetch the values for the filter
+     * @param string|array|\Elastica\Index $options An array of options or the index from which to fetch the terms values. Defaults to the current index.
+     *
+     * @return $this
      */
     public function setLookup($key, $type, $id, $path, $options = array())
     {
@@ -102,10 +99,11 @@ class Terms extends AbstractFilter
     }
 
     /**
-     * Adds an additional term to the query
+     * Adds an additional term to the query.
      *
-     * @param  string                 $term Filter term
-     * @return \Elastica\Filter\Terms Filter object
+     * @param string $term Filter term
+     *
+     * @return $this
      */
     public function addTerm($term)
     {
@@ -115,11 +113,13 @@ class Terms extends AbstractFilter
     }
 
     /**
-     * Converts object to an array
+     * Converts object to an array.
      *
      * @see \Elastica\Filter\AbstractFilter::toArray()
+     *
      * @throws \Elastica\Exception\InvalidException
-     * @return array                                data array
+     *
+     * @return array
      */
     public function toArray()
     {
@@ -132,10 +132,11 @@ class Terms extends AbstractFilter
     }
 
     /**
-     * Set execution mode
+     * Set execution mode.
      *
-     * @param  string                 $execution Options: "bool", "and", "or", "plain" or "fielddata"
-     * @return \Elastica\Filter\Terms
+     * @param string $execution Options: "bool", "and", "or", "plain" or "fielddata"
+     *
+     * @return $this
      */
     public function setExecution($execution)
     {

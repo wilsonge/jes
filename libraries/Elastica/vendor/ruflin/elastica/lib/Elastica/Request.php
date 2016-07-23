@@ -1,14 +1,11 @@
 <?php
-
 namespace Elastica;
 
 use Elastica\Exception\InvalidException;
 
 /**
- * Elastica Request object
+ * Elastica Request object.
  *
- * @category Xodoa
- * @package Elastica
  * @author Nicolas Ruflin <spam@ruflin.com>
  */
 class Request extends Param
@@ -25,13 +22,14 @@ class Request extends Param
     protected $_connection;
 
     /**
-     * Construct
+     * Construct.
      *
-     * @param  string            $path       Request path
-     * @param  string            $method     OPTIONAL Request method (use const's) (default = self::GET)
-     * @param  array             $data       OPTIONAL Data array
-     * @param  array             $query      OPTIONAL Query params
-     * @param  Connection        $connection
+     * @param string     $path       Request path
+     * @param string     $method     OPTIONAL Request method (use const's) (default = self::GET)
+     * @param array      $data       OPTIONAL Data array
+     * @param array      $query      OPTIONAL Query params
+     * @param Connection $connection
+     *
      * @return \Elastica\Request OPTIONAL Connection object
      */
     public function __construct($path, $method = self::GET, $data = array(), array $query = array(), Connection $connection = null)
@@ -47,10 +45,11 @@ class Request extends Param
     }
 
     /**
-     * Sets the request method. Use one of the for consts
+     * Sets the request method. Use one of the for consts.
      *
-     * @param  string            $method Request method
-     * @return \Elastica\Request Current object
+     * @param string $method Request method
+     *
+     * @return $this
      */
     public function setMethod($method)
     {
@@ -58,7 +57,7 @@ class Request extends Param
     }
 
     /**
-     * Get request method
+     * Get request method.
      *
      * @return string Request method
      */
@@ -68,10 +67,11 @@ class Request extends Param
     }
 
     /**
-     * Sets the request data
+     * Sets the request data.
      *
-     * @param  array             $data Request data
-     * @return \Elastica\Request
+     * @param array $data Request data
+     *
+     * @return $this
      */
     public function setData($data)
     {
@@ -79,7 +79,7 @@ class Request extends Param
     }
 
     /**
-     * Return request data
+     * Return request data.
      *
      * @return array Request data
      */
@@ -89,10 +89,11 @@ class Request extends Param
     }
 
     /**
-     * Sets the request path
+     * Sets the request path.
      *
-     * @param  string            $path Request path
-     * @return \Elastica\Request Current object
+     * @param string $path Request path
+     *
+     * @return $this
      */
     public function setPath($path)
     {
@@ -100,7 +101,7 @@ class Request extends Param
     }
 
     /**
-     * Return request path
+     * Return request path.
      *
      * @return string Request path
      */
@@ -110,7 +111,7 @@ class Request extends Param
     }
 
     /**
-     * Return query params
+     * Return query params.
      *
      * @return array Query params
      */
@@ -120,8 +121,9 @@ class Request extends Param
     }
 
     /**
-     * @param  array             $query
-     * @return \Elastica\Request
+     * @param array $query
+     *
+     * @return $this
      */
     public function setQuery(array $query = array())
     {
@@ -129,8 +131,9 @@ class Request extends Param
     }
 
     /**
-     * @param  \Elastica\Connection $connection
-     * @return \Elastica\Request
+     * @param \Elastica\Connection $connection
+     *
+     * @return $this
      */
     public function setConnection(Connection $connection)
     {
@@ -140,9 +143,10 @@ class Request extends Param
     }
 
     /**
-     * Return Connection Object
+     * Return Connection Object.
      *
-     * @throws Exception\InvalidException
+     * @throws Exception\InvalidException If no valid connection was setted
+     *
      * @return \Elastica\Connection
      */
     public function getConnection()
@@ -155,7 +159,7 @@ class Request extends Param
     }
 
     /**
-     * Sends request to server
+     * Sends request to server.
      *
      * @return \Elastica\Response Response object
      */
@@ -181,7 +185,7 @@ class Request extends Param
     }
 
     /**
-     * Converts request to curl request format
+     * Converts request to curl request format.
      *
      * @return string
      */

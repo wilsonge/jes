@@ -1,14 +1,13 @@
 <?php
-
 namespace Elastica;
 
 use Elastica\Exception\NotImplementedException;
 use Elastica\Suggest\AbstractSuggest;
 
 /**
- * Class Suggest
- * @package Elastica\Suggest
- * @link http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-suggesters.html
+ * Class Suggest.
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
  */
 class Suggest extends Param
 {
@@ -23,38 +22,65 @@ class Suggest extends Param
     }
 
     /**
-     * Set the global text for this suggester
-     * @param  string            $text
-     * @return \Elastica\Suggest
+     * Set the global text for this suggester.
+     *
+     * @param string $text
+     *
+     * @return $this
      */
     public function setGlobalText($text)
     {
-        return $this->setParam("text", $text);
+        return $this->setParam('text', $text);
     }
 
     /**
-     * Add a suggestion to this suggest clause
-     * @param  AbstractSuggest   $suggestion
-     * @return \Elastica\Suggest
+     * Add a suggestion to this suggest clause.
+     *
+     * @param AbstractSuggest $suggestion
+     *
+     * @return $this
      */
     public function addSuggestion(AbstractSuggest $suggestion)
     {
-        return $this->setParam($suggestion->getName(), $suggestion->toArray());
+        return $this->addParam('suggestion', $suggestion);
     }
 
     /**
-     * @param  Suggest|AbstractSuggest           $suggestion
-     * @return \Elastica\Suggest
+     * @param Suggest|AbstractSuggest $suggestion
+     *
      * @throws Exception\NotImplementedException
+     *
+     * @return self
      */
     public static function create($suggestion)
     {
         switch (true) {
-            case $suggestion instanceof Suggest:
+            case $suggestion instanceof self:
                 return $suggestion;
             case $suggestion instanceof AbstractSuggest:
                 return new self($suggestion);
         }
         throw new NotImplementedException();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray()
+    {
+        $array = parent::toArray();
+
+        $baseName = $this->_getBaseName();
+
+        if (isset($array[$baseName]['suggestion'])) {
+            $suggestion = $array[$baseName]['suggestion'];
+            unset($array[$baseName]['suggestion']);
+
+            foreach ($suggestion as $key => $value) {
+                $array[$baseName][$key] = $value;
+            }
+        }
+
+        return $array;
     }
 }

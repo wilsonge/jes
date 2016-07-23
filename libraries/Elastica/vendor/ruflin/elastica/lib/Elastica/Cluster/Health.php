@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Cluster;
 
 use Elastica\Client;
@@ -9,25 +8,21 @@ use Elastica\Request;
 /**
  * Elastic cluster health.
  *
- * @package Elastica
  * @author Ray Ward <ray.ward@bigcommerce.com>
- * @link http://www.elasticsearch.org/guide/reference/api/admin-cluster-health.html
+ *
+ * @link https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html
  */
 class Health
 {
     /**
-     * Elastica client.
-     *
-     * @var \Elastica\Client Client object
+     * @var \Elastica\Client Client object.
      */
-    protected $_client = null;
+    protected $_client;
 
     /**
-     * The cluster health data.
-     *
-     * @var array
+     * @var array The cluster health data.
      */
-    protected $_data = null;
+    protected $_data;
 
     /**
      * @param \Elastica\Client $client The Elastica client.
@@ -64,7 +59,7 @@ class Health
     /**
      * Refreshes the health data for the cluster.
      *
-     * @return \Elastica\Cluster\Health
+     * @return $this
      */
     public function refresh()
     {

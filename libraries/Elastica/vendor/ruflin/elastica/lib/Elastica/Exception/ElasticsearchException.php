@@ -1,12 +1,9 @@
 <?php
-
 namespace Elastica\Exception;
 
 /**
- * Elasticsearch exception
+ * Elasticsearch exception.
  *
- * @category Xodoa
- * @package Elastica
  * @author Ian Babrou <ibobrik@gmail.com>
  */
 class ElasticsearchException extends \Exception implements ExceptionInterface
@@ -14,33 +11,36 @@ class ElasticsearchException extends \Exception implements ExceptionInterface
     const REMOTE_TRANSPORT_EXCEPTION = 'RemoteTransportException';
 
     /**
-     * Elasticsearch exception name
-     *
-     * @var string|null
+     * @var string|null Elasticsearch exception name
      */
     private $_exception;
 
     /**
-     * Whether exception was local to server node or remote
-     *
-     * @var bool
+     * @var bool Whether exception was local to server node or remote
      */
     private $_isRemote = false;
 
     /**
-     * Constructs elasticsearch exception
+     * @var array Error array
+     */
+    protected $_error = array();
+
+    /**
+     * Constructs elasticsearch exception.
      *
-     * @param int    $code  Error code
-     * @param string $error Error message from elasticsearch
+     * @param int   $code  Error code
+     * @param array $error Error object from elasticsearch
      */
     public function __construct($code, $error)
     {
-        $this->_parseError($error);
-        parent::__construct($error, $code);
+        $this->_error = $error;
+        // TODO: es2 improve as now an array
+        $this->_parseError(json_encode($error));
+        parent::__construct(json_encode($error), $code);
     }
 
     /**
-     * Parse error message from elasticsearch
+     * Parse error message from elasticsearch.
      *
      * @param string $error Error message
      */
@@ -61,9 +61,10 @@ class ElasticsearchException extends \Exception implements ExceptionInterface
     }
 
     /**
-     * Extract exception name from error response
+     * Extract exception name from error response.
      *
-     * @param  string      $error
+     * @param string $error
+     *
      * @return null|string
      */
     protected function _extractException($error)
@@ -76,7 +77,7 @@ class ElasticsearchException extends \Exception implements ExceptionInterface
     }
 
     /**
-     * Returns elasticsearch exception name
+     * Returns elasticsearch exception name.
      *
      * @return string|null
      */
@@ -86,12 +87,20 @@ class ElasticsearchException extends \Exception implements ExceptionInterface
     }
 
     /**
-     * Returns whether exception was local to server node or remote
+     * Returns whether exception was local to server node or remote.
      *
      * @return bool
      */
     public function isRemoteTransportException()
     {
         return $this->_isRemote;
+    }
+
+    /**
+     * @return array Error array
+     */
+    public function getError()
+    {
+        return $this->_error;
     }
 }

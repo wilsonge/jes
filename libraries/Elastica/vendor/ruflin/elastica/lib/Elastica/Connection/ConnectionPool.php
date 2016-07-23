@@ -1,5 +1,4 @@
 <?php
-
 namespace Elastica\Connection;
 
 use Elastica\Client;
@@ -8,30 +7,24 @@ use Elastica\Connection\Strategy\StrategyInterface;
 use Exception;
 
 /**
- * Description of ConnectionPool
+ * Description of ConnectionPool.
  *
  * @author chabior
  */
 class ConnectionPool
 {
     /**
-     * Connections array
-     *
-     * @var array|\Elastica\Connection[]
+     * @var array|\Elastica\Connection[] Connections array
      */
     protected $_connections;
 
     /**
-     * Strategy for connection
-     *
-     * @var \Elastica\Connection\Strategy\StrategyInterface
+     * @var \Elastica\Connection\Strategy\StrategyInterface Strategy for connection
      */
     protected $_strategy;
 
     /**
-     * Callback function called on connection fail
-     *
-     * @var callback
+     * @var callback Function called on connection fail
      */
     protected $_callback;
 
@@ -51,22 +44,30 @@ class ConnectionPool
 
     /**
      * @param \Elastica\Connection $connection
+     *
+     * @return $this
      */
     public function addConnection(Connection $connection)
     {
         $this->_connections[] = $connection;
+
+        return $this;
     }
 
     /**
      * @param array|\Elastica\Connection[] $connections
+     *
+     * @return $this
      */
     public function setConnections(array $connections)
     {
         $this->_connections = $connections;
+
+        return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function hasConnection()
     {
@@ -88,8 +89,9 @@ class ConnectionPool
     }
 
     /**
-     * @return \Elastica\Connection
      * @throws \Elastica\Exception\ClientException
+     *
+     * @return \Elastica\Connection
      */
     public function getConnection()
     {
@@ -111,7 +113,6 @@ class ConnectionPool
     }
 
     /**
-     *
      * @return \Elastica\Connection\Strategy\StrategyInterface
      */
     public function getStrategy()
