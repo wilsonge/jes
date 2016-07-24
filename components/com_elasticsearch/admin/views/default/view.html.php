@@ -32,8 +32,7 @@ class ElasticSearchViewDefault extends JViewLegacy
 
           if($this->get('isConnected')){
               $this->items = $this->get('Items');
-              $this->status = $this->get('Status'); 
-          }   
+          }
           $this->pluginStatus = $this->get('pluginState');
 
 

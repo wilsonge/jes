@@ -8,7 +8,7 @@
 	<authorEmail>info-deti@crim.ca</authorEmail>
 	<authorUrl>http://crim-ca.github.io/jes</authorUrl>
 	<version>1.0</version>
-	<description>ElasticSearch component</description>
+	<description>COM_ELASTICSEARCH_DESC</description>
 	<files folder="site">
 		<filename>controller.php</filename>
 		<filename>elasticsearch.php</filename>
@@ -20,7 +20,7 @@
 		<language tag="en-GB">en-GB/en-GB.com_elasticsearch.ini</language>
 	</languages>
 	<administration>
-		<menu img="components/com_elasticsearch/images/small_es.png">ElasticSearch</menu>
+		<menu img="components/com_elasticsearch/images/small_es.png">COM_ELASTICSEARCH</menu>
 		<files folder="admin">
 			<filename>index.html</filename>
 			<filename>elasticsearch.php</filename>

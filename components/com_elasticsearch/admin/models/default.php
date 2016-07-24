@@ -72,20 +72,6 @@ class ElasticSearchModelDefault extends JModelItem
 	}
 
 	/**
-	 * Get the status of the elastic search server
-	 *
-	 * @return  array  Response data array
-	 *
-	 * @since   1.0
-	 */
-	public function getStatus()
-	{
-		$status = $this->elasticaClient->getStatus();
-
-		return $status->getServerStatus();
-	}
-
-	/**
 	 * Get the items
 	 *
 	 * @return  array
@@ -94,76 +80,83 @@ class ElasticSearchModelDefault extends JModelItem
 	 */
 	public function getItems()
 	{
-		if(!$this->items)
+		if (!$this->items)
 		{
-			$this->items =array();
+			$this->items = array();
 
 			$index = $this->elasticaClient->getIndex(ElasticSearchConfig::getIndexName());
 
-			if($index->exists())
+			if (!$index->exists())
 			{
-				// First we get all types
-				JPluginHelper::importPlugin('elasticsearch');
-				$types = JEventDispatcher::getInstance()->trigger('onElasticSearchType', array());
+				return $this->items;
+			}
 
-				// Prepare an array index by type name
-				foreach($types as $type)
+			// First we get all types
+			JPluginHelper::importPlugin('elasticsearch');
+			$types = JEventDispatcher::getInstance()->trigger('onElasticSearchType', array());
+
+			// Prepare an array index by type name
+			foreach($types as $type)
+			{
+				$this->items[$type['type']] = array();
+			}
+
+			$mapping = $index->getMapping();
+
+			if (empty($mapping))
+			{
+				return $this->items;
+			}
+
+			//  Add language by type. Example : array('article' => array('en','fr'))
+			$lang = array();
+
+			// Array to count doc by type
+			$counts = array();
+
+			// Boost
+			$boosts = array();
+
+			foreach($mapping[ElasticSearchConfig::getIndexName()] as $key => $map)
+			{
+				$elasticType= $index->getType($key);
+				$mapping = $elasticType->getMapping();
+				$pos= strrpos($key,'_');
+
+				if($pos)
 				{
-					$this->items[$type['type']] = array();
-				}
+					// Add the language
+					$type_base = substr($key,0,$pos);
+					$type_lang = substr($key,$pos+1);
+					$lang[$type_base][] = $type_lang;
 
-				$mapping = $index->getMapping();
+					// Count
+					$sum = (array_key_exists($type_base, $counts)) ? $counts[$type_base] : 0;
+					$counts[$type_base] = $sum + $elasticType->count('');
 
-				//  Add language by type. Example : array('article' => array('en','fr'))
-				$lang = array();
+					$boosts[$type_base] = $mapping[$key]["_boost"]["null_value"];
 
-				// Array to count doc by type
-				$counts = array();
-
-				// Boost
-				$boosts = array();
-
-				foreach($mapping[ElasticSearchConfig::getIndexName()] as $key => $map)
-				{
-					$elasticType= $index->getType($key);
-					$mapping = $elasticType->getMapping();
-					$pos= strrpos($key,'_');
-
-					if($pos)
+					if (!array_key_exists($type_base,$mapping[ElasticSearchConfig::getIndexName()]))
 					{
-						// Add the language
-						$type_base = substr($key,0,$pos);
-						$type_lang = substr($key,$pos+1);
-						$lang[$type_base][] = $type_lang;
-
-						// Count
-						$sum = (array_key_exists($type_base, $counts)) ? $counts[$type_base] : 0;
-						$counts[$type_base] = $sum + $elasticType->count('');
-
-						$boosts[$type_base] = $mapping[$key]["_boost"]["null_value"];
-
-						if (!array_key_exists($type_base,$mapping[ElasticSearchConfig::getIndexName()]))
-						{
-							$mapping[ElasticSearchConfig::getIndexName()][$type_base];
-						}
-					}
-					else
-					{
-						$boosts[$key] = $mapping[$key]["_boost"]["null_value"];
+						$mapping[ElasticSearchConfig::getIndexName()][$type_base];
 					}
 				}
-
-				// Get all types of the index
-				foreach($this->items as $key => $map)
+				else
 				{
-					$elasticType= $index->getType($key);
-
-					$count = $elasticType->count('');
-					$langs = (array_key_exists($key, $lang)) ? $lang[$key] : array();
-					$total = (array_key_exists($key, $lang)) ? $counts[$key]+$count :$count;
-					$boost = (array_key_exists($key, $boosts)) ? $boosts[$key]: 1.0;
-					$this->items[$key] = array('name' => $key, 'count' =>$total,'lang' =>$langs,"boost"=>$boost);
+					$boosts[$key] = $mapping[$key]["_boost"]["null_value"];
 				}
+			}
+
+			// Get all types of the index
+			foreach($this->items as $key => $map)
+			{
+				$elasticType= $index->getType($key);
+
+				$count = $elasticType->count('');
+				$langs = (array_key_exists($key, $lang)) ? $lang[$key] : array();
+				$total = (array_key_exists($key, $lang)) ? $counts[$key]+$count :$count;
+				$boost = (array_key_exists($key, $boosts)) ? $boosts[$key]: 1.0;
+				$this->items[$key] = array('name' => $key, 'count' =>$total,'lang' =>$langs,"boost"=>$boost);
 			}
 		}
 

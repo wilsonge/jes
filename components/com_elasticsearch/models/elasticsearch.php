@@ -109,7 +109,7 @@ class ElasticSearchModelElasticSearch extends JModelItem
 	private function getHighlightFields()
 	{
 		JPluginHelper::importPlugin('elasticsearch');
-		$fields= JEventDispatcher::getInstance()->trigger('onElasticSearchHighlight');
+		$fields = JEventDispatcher::getInstance()->trigger('onElasticSearchHighlight');
 
 		return $fields;
 	}

@@ -13,26 +13,23 @@
 	
 	JHtml::_('behavior.tooltip');
 
-	if (!$this->pluginStatus["Content - ElasticSearch"]->enabled){
-		JError::raiseWarning( 100, JText::_('COM_ELASTICSEARCH_ENABLE_ELASTIC_PLUGIN') );
+	if (!$this->pluginStatus["Content - ElasticSearch"]->enabled)
+	{
+		JFactory::getApplication()->enqueueMessage(JText::_('COM_ELASTICSEARCH_ENABLE_ELASTIC_PLUGIN'), 'error');
 	}
 
-	if (!$this->pluginStatus["System - ElasticaLib"]->enabled){
-		JError::raiseWarning( 100, JText::_('COM_ELASTICSEARCH_ENABLE_ELASTICA_PLUGIN') );
-	}
-	if (($this->status['ok'])!="ok"){
-		JError::raiseWarning( 100, JText::_('COM_ELASTICSEARCH_ELASTICSEARCH_DISCONNECTED') );
+	if (!$this->pluginStatus["System - ElasticaLib"]->enabled)
+	{
+		JFactory::getApplication()->enqueueMessage(JText::_('COM_ELASTICSEARCH_ENABLE_ELASTICA_PLUGIN'), 'error');
 	}
 ?>
 
-<h2><?php echo JText::_("Status"); ?></h2>
+<h2><?php echo JText::_("COM_ELASTICSEARCH_STATUS"); ?></h2>
 <ul>
-	<li><b><?php echo JText::_('COM_ELASTICSEARCH_SERVER_CONNECTION'); ?> :</b><?php echo ($this->status['ok']) ?  "ok" : "not ok"; ?></li>
-	<li><b><?php echo JText::_('COM_ELASTICSEARCH_SERVER_ELASTICSEARCH_NODE'); ?></b> : <?php echo $this->escape($this->status['name']); ?></li>
 	<li><b><?php echo JText::_('COM_ELASTICSEARCH_SERVER_INDEX'); ?></b> :<?php  echo $this->escape($this->indexName); ?></li>
 </ul>
 	
-<h2><?php echo JText::_("Types"); ?></h2>
+<h2><?php echo JText::_("COM_ELASTICSEARCH_TYPES"); ?></h2>
 
 <?php if($this->items): ?>
 <table class="adminlist" style="clear: both; width:500px">
