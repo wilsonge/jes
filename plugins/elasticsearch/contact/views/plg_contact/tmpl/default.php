@@ -6,6 +6,8 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
+
+$categories = explode(';',$this->data['categories']);
 ?>
 <dt class="result-name">
 	<?php if (isset($this->data['href'])) :?>
@@ -16,10 +18,10 @@
 		<?php echo $this->escape($this->data['name']);?>
 	<?php endif; ?>
 </dt>
-<?php if (isset($this->categories)) : ?>
+<?php if ($categories) : ?>
 	<dd class="result-category">
 		<span class="small">
-			(<?php echo $this->escape($this->categories[0]); ?>)
+			(<?php echo $this->escape($categories[0]); ?>)
 		</span>
 	</dd>
 <?php endif; ?>
