@@ -88,7 +88,7 @@ class ElasticSearchModelDefault extends JModelItem
 	/**
 	 * Get the items
 	 *
-	 * @return  bool
+	 * @return  array
 	 *
 	 * @since   1.0
 	 */
@@ -182,13 +182,12 @@ class ElasticSearchModelDefault extends JModelItem
 		$db = $this->getDbo();
 		$query = $db->getQuery(true);
 
-		$query->select($db->quoteName('name'));
+		$query->select($db->quoteName(array('name', 'enabled')));
 		$query->from($db->quoteName('#__extensions'));
 		$query->where($db->quoteName('type') . ' = ' .  $db->quote('plugin'));
 		$query->where($db->quoteName('folder') . ' IN(' .  $db->quote('system') . ',' . $db->quote('content') . ')');
 		$query->where($db->quoteName('element') . ' IN(' . $db->quote('elastic'). ',' . $db->quote('elasticaLib'). ')');
 		$db->setQuery($query);
-		$db->execute();
 
 		return $db->loadObjectList('name');
 	}
