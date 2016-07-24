@@ -107,6 +107,7 @@ class ElasticSearchModelDefault extends JModelItem
 				$mapping = $elasticType->getMapping();
 				$pos= strrpos($key,'_');
 
+				// TODO: Fix boosts - it's totally broken at the moment
 				if($pos)
 				{
 					// Add the language
@@ -118,16 +119,11 @@ class ElasticSearchModelDefault extends JModelItem
 					$sum = (array_key_exists($type_base, $counts)) ? $counts[$type_base] : 0;
 					$counts[$type_base] = $sum + $elasticType->count('');
 
-					$boosts[$type_base] = $mapping[$key]["_boost"]["null_value"];
-
-					if (!array_key_exists($type_base,$mapping[ElasticSearchConfig::getIndexName()]))
-					{
-						$mapping[ElasticSearchConfig::getIndexName()][$type_base];
-					}
+					//$boosts[$type_base] = $mapping[$key]["_boost"]["null_value"];
 				}
 				else
 				{
-					$boosts[$key] = $mapping[$key]["_boost"]["null_value"];
+					//$boosts[$key] = $mapping[$key]["_boost"]["null_value"];
 				}
 			}
 
