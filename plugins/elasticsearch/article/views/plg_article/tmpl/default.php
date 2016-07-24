@@ -45,7 +45,7 @@ $categories = explode(';',$this->data['categories']);
 			}
 			else
 			{
-				$text=SearchHelper::prepareSearchContent($this->data['introtext'],"");
+				$text=SearchHelper::prepareSearchContent($this->data['introtext'], $this->searchword);
 				echo JHtmlString::truncate($text,500,true,false);
 			}
 		}

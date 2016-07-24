@@ -25,16 +25,17 @@ class ElasticSearchHelper
 	/**
 	 * Return HTML of a single result Elastic in argument
 	 * 
-	 * @var     \Elastica\Result   $item  The Elastic Item
+	 * @var   \Elastica\Result  $item        The Elastic Result
+	 * @var   string            $searchword  The string searched for
 	 *
 	 * @return   string  The html of the item
 	 *
 	 * @since  1.0
 	 */
-	public static function getHTML($item)
+	public static function getHTML($item, $searchword)
 	{
 		$html='';
-		$type=$item->getType();
+		$type = $item->getType();
 
 		// Remove the suffix _*
 		$pos= strrpos($type,'_');
@@ -47,7 +48,7 @@ class ElasticSearchHelper
 		JPluginHelper::importPlugin('elasticsearch');
 
 		// Trigger the index event.
-		$results = JEventDispatcher::getInstance()->trigger('onElasticSearchDisplay', array($type,$item));
+		$results = JEventDispatcher::getInstance()->trigger('onElasticSearchDisplay', array($type, $item, $searchword));
 
 		foreach ($results as $result)
 		{

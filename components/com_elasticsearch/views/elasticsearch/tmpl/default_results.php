@@ -14,7 +14,7 @@ defined('_JEXEC') or die;
 
 <dl class="search-results">
 <?php foreach($this->results as $result) : ?>
-	<?php echo ElasticSearchHelper::getHTML($result); ?> 
+	<?php echo ElasticSearchHelper::getHTML($result, $this->searchword); ?>
 	
 <?php endforeach; ?>
 </dl>

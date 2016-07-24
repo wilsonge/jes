@@ -6,22 +6,23 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
-?>
-<?php
-	// No direct access to this file
-	defined('_JEXEC') or die('Restricted Access');
-	
-	JHtml::_('behavior.tooltip');
 
-	if (!$this->pluginStatus["Content - ElasticSearch"]->enabled)
-	{
-		JFactory::getApplication()->enqueueMessage(JText::_('COM_ELASTICSEARCH_ENABLE_ELASTIC_PLUGIN'), 'error');
-	}
+// No direct access to this file
+defined('_JEXEC') or die('Restricted Access');
 
-	if (!$this->pluginStatus["System - ElasticaLib"]->enabled)
-	{
-		JFactory::getApplication()->enqueueMessage(JText::_('COM_ELASTICSEARCH_ENABLE_ELASTICA_PLUGIN'), 'error');
-	}
+JHtml::_('behavior.tooltip');
+
+if (!$this->pluginStatus["Content - ElasticSearch"]->enabled)
+{
+	JFactory::getApplication()->enqueueMessage(JText::_('COM_ELASTICSEARCH_ENABLE_ELASTIC_PLUGIN'), 'error');
+}
+
+if (!$this->pluginStatus["System - ElasticaLib"]->enabled)
+{
+	JFactory::getApplication()->enqueueMessage(JText::_('COM_ELASTICSEARCH_ENABLE_ELASTICA_PLUGIN'), 'error');
+
+	return;
+}
 ?>
 
 <h2><?php echo JText::_("COM_ELASTICSEARCH_STATUS"); ?></h2>

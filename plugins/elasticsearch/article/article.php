@@ -6,10 +6,8 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
-?>
-<?php
 
-// no direct access
+// No direct access
 defined('_JEXEC') or die;
 
 jimport( 'joomla.application.component.view' );
@@ -23,24 +21,23 @@ require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/adapte
 /**
  * ElasticSearch adapter for com_content.
  *
- * @author Jean-Baptiste Cayrou
- * @author Adrien Gareau
+ * @since  1.0
  */
-class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
+class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 {
-
 	/**
 	 * The type ElasticSearch of content which will be indexed
 	 *
 	 * @var    string
+	 * @since  1.0
 	 */
 	protected $type = 'article';
-
 
 	/**
 	 * The type ElasticSearchto display
 	 *
 	 * @var    string
+	 * @since  1.0
 	 */
 	protected $type_display = 'Article';
 
@@ -50,7 +47,7 @@ class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	 * @param   object  &$subject  The object to observe
 	 * @param   array   $config    An array that holds the plugin configuration
 	 *
-	 * @since   2.5
+	 * @since   1.0
 	 */
 	public function __construct(&$subject, $config)
 	{
@@ -80,7 +77,7 @@ class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
 			'boost' 				 => array('type' => 'float', 'include_in_all' => FALSE),
 			);
 		
-		$this->setMapping($mapping);	
+		$this->setMapping($mapping);
 	}
 
 	/**
@@ -90,13 +87,16 @@ class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	 * @param   JTable  $data    A JTable object containing the record to be deleted
 	 *
 	 * @return  boolean  True on success.
+	 * @since   1.0
 	 */
 	public function onElasticSearchAfterDelete($context, $data)
 	{
 		// Skip plugin if we are deleting something other than article
-		if ($context != 'com_content.article') {
-				return false;
+		if ($context != 'com_content.article')
+		{
+			return false;
 		}
+
 		$this->delete($data->id);
 		
 		return true;
@@ -111,24 +111,28 @@ class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	 *
 	 * @return  boolean  True on success.
 	 *
-	 * @since   2.5
+	 * @since   1.0
 	 * @throws  Exception on database error.
 	 */
 	public function onElasticSearchAfterSave($context, $row, $isNew)
 	{
-
 		// Skip plugin if we are saving something other than article
-		if ($context != 'com_content.article') {
-				return true;
+		if ($context != 'com_content.article')
+		{
+			return true;
 		}
 
 		//Delete the document in elasticsearch (if language changed)
 		$this->delete($id = $row->id);
-		
-		if($row->state == 1){ // If this article is published
+
+		// If this article is published
+		if($row->state == 1)
+		{
 			$document = $this->rowToDocument($row);
 			$this->addDocument($document);
 		}
+
+		return true;
 	}
 	
 	/**
@@ -140,18 +144,21 @@ class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	 * @param   string   $context  The context for the content passed to the plugin.
 	 * @param   array    $pks      A list of primary key ids of the content that has changed state.
 	 * @param   integer  $value    The value of the state that the content has been changed to.
-	 * @since   2.5
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
 	 */	
 	public function onElasticSearchChangeState($context, $pks, $value)
 	{
-		
 		// Skip plugin if we are saving something other than article
-		if ($context != 'com_content.article') {
-				return true;
+		if ($context != 'com_content.article')
+		{
+			return;
 		}
 		
 		// Get all articles modifies
-		$db = JFactory::getDBO();
+		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from('#__content c');
@@ -159,89 +166,106 @@ class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
 		$db->setQuery((string)$query);
 		$articles = $db->loadObjectList();
 		
-		foreach($articles as $article){
-				$this->delete($article->id);
-        		if($article->state == 1){ // If this article is published
-	        		$document = $this->rowToDocument($article);
-        			$this->pushDocument($document);	
-	        	}
+		foreach($articles as $article)
+		{
+			$this->delete($article->id);
+
+			// If this article is published
+			if($article->state == 1)
+			{
+				$document = $this->rowToDocument($article);
+				$this->pushDocument($document);
+			}
 		}
 
 		$this->flushDocuments();
 	}
 
-
 	/**
-	 * Convert an row to an elastica document
+	 * Convert an article to an elastica document
+	 *
+	 * @param   stdClass|JTable  $row  The entity object
+	 *
+	 * @return  \Elastica\Document
+	 *
+	 * @since  1.0
 	 */
-	private function rowToDocument($row){
+	private function rowToDocument($row)
+	{
 		$id = $row->id;
 
-		//Create a date object
+		// Create a date object
 		$date = new DateTime($row->created);
-		
-		//Get the names of the categories
+
+		// Get the names of the categories
 		$category = JCategories::getInstance('Content')->get($row->catid);
 		$categories = array();
-		while($category&&$category->id > 1){
+
+		while ($category && $category->id > 1)
+		{
 			$categories[] = $category->title;
 			$category = $category->getParent();
 		}
-		
+
 		// Create a document
 		$entity = array(
-			'title'    		    => html_entity_decode(strip_tags($row->title),ENT_COMPAT|ENT_HTML401,'UTF-8'), 
-			'introtext'		    => html_entity_decode(strip_tags($row->introtext),ENT_COMPAT | ENT_HTML401,'UTF-8'),
-			'fulltext'		    => html_entity_decode(strip_tags($row->fulltext),ENT_COMPAT | ENT_HTML401,'UTF-8'),
-			'created_by_alias'  => $row->created_by_alias,
-			'language'		    => $row->language,
-			'categories' 	    => implode(';',$categories),
-			'created_at'		=> $date->format('Y-m-d\Th:i:s'),
-			'href'				=> ContentHelperRoute::getArticleRoute($row->id),
-			'feature'			=> $row->featured
+			'title'            => html_entity_decode(strip_tags($row->title), ENT_COMPAT | ENT_HTML401,'UTF-8'),
+			'introtext'        => html_entity_decode(strip_tags($row->introtext), ENT_COMPAT | ENT_HTML401,'UTF-8'),
+			'fulltext'         => html_entity_decode(strip_tags($row->fulltext), ENT_COMPAT | ENT_HTML401,'UTF-8'),
+			'created_by_alias' => $row->created_by_alias,
+			'language'         => $row->language,
+			'categories'       => implode(';',$categories),
+			'created_at'       => $date->format('Y-m-d\Th:i:s'),
+			'href'             => ContentHelperRoute::getArticleRoute($row->id),
+			'feature'          => $row->featured
 		);
 
-		$document = new \Elastica\Document($id,$entity);
+		$document = new \Elastica\Document($id, $entity);
 
 		return $document;
-
 	}
 
 	/**
 	 * Method called to index all contents
 	 * 
-	 * @param   Array    $type    A String array
+	 * @param   array  $types  The array of types
 	 *
+	 * @return  string  The elastic type to display
+	 *
+	 * @since  1.0
 	 */
-	public function onElasticSearchIndexAll($types){
-		
-		//Get all articles
-		$db = JFactory::getDBO();
+	public function onElasticSearchIndexAll($types)
+	{
+		// Get all articles
+		$db = JFactory::getDbo();
 		
 		$query = $db->getQuery(true);
 		$query->select('*');
-		$query->from('#__content');
-		$db->setQuery((string)$query);
+		$query->from($db->quoteName('#__content'));
+		$db->setQuery($query);
 		$articles = $db->loadObjectList();
 
-        foreach($articles as $article){
-        		if($article->state == 1){ // If this article is published
-	        		$document = $this->rowToDocument($article);
-        			$this->pushDocument($document);	
-	        	}
+        foreach ($articles as $article)
+        {
+			// If this article is published
+			if ($article->state == 1)
+			{
+				$document = $this->rowToDocument($article);
+				$this->pushDocument($document);
+			}
 		}
 
 		$this->flushDocuments();
 
 		return $this->type_display;
-			
 	}
 	
 	/**
 	 * Return the type of content
 	 * 
-	 * @return Array
-	 * */
+	 * @return  array
+	 * @since   1.0
+	 */
 	public function onElasticSearchType()
 	{
 		$infoType=array();
@@ -250,27 +274,4 @@ class plgElasticsearchArticle extends ElasticSearchIndexerAdapter
 		
 		return $infoType;
 	}
-	
-	/**
-	 * Index an article
-	 * @param   JTable   $row 
-	 *
-	 * @return  boolean  True on success.
-	 * */
-	protected function index($row,$isNew=false){
-		
-		$id = $row->id;
-		$this->delete($id);
-		
-		if($row->state == 1){ // If this article is published
-
-			$document = $this->rowToDocument($row);
-			$this->addDocument($document);
-	
-		}
-		
-		return true;
-		
-	}
-
 }

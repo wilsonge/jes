@@ -206,13 +206,13 @@ class ElasticSearchModelElasticSearch extends JModelItem
 
 		// Set offset and limit for pagination
 		$elasticaQuery->setFrom($offset);
-		$elasticaQuery->setLimit($limit);
+		$elasticaQuery->setSize($limit);
 
 		//Create a filter for _type
-		$elasticaFilterype=$this->createFilterType($this->areas);
+		$elasticaFilterype = $this->createFilterType($this->areas);
 
 		// Add filter to the search object.
-		$elasticaQuery->setFilter($elasticaFilterype);
+		$elasticaQuery->setPostFilter($elasticaFilterype);
 
 		// Search on the index.
 		$elasticaResultSet = $this->elasticaIndex->search($elasticaQuery);
@@ -253,14 +253,15 @@ class ElasticSearchModelElasticSearch extends JModelItem
 		$elasticaFilterType = new \Elastica\Filter\Terms("_type");
 
 		//  Foreach existing ES types
-		foreach($plg_types as $area )
+		foreach ($plg_types as $area )
 		{
 			// Check if this type is enable for the search
-			$check = JFactory::getApplication()->input->get->getString($area['type'], null);
+			$check = JFactory::getApplication()->input->get->getString($area['type'], '');
 
-			if($check !="") // If enabled
+			// If enabled
+			if (!empty($check))
 			{
-				$all_types=false;
+				$all_types = false;
 
 				// Generate all type with language extension type_en-GB etc.
 				$langTypes = $this->getTypesWithLang($area['type']);
@@ -273,13 +274,13 @@ class ElasticSearchModelElasticSearch extends JModelItem
 		}
 
 		// If all_type still true, the search is for all content type
-		if($all_types)
+		if ($all_types)
 		{
 			foreach($this->areas as $area )
 			{
 				$langTypes =  $this->getTypesWithLang($area['type']);
 
-				foreach($langTypes as $type)
+				foreach ($langTypes as $type)
 				{
 					$elasticaFilterType->addTerm($type);
 				}
@@ -300,8 +301,8 @@ class ElasticSearchModelElasticSearch extends JModelItem
 
 		$types = array();
 		$types[] = $type; // Add the type for " * " language
-		$explode = explode('-',$Jlang->getTag());
-		$types[] = $type."_".$explode[0]; // And the current language
+		$explode = explode('-', $Jlang->getTag());
+		$types[] = $type . "_" . $explode[0]; // And the current language
 
 		return $types;
 	}

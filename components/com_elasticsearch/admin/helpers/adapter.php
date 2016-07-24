@@ -9,10 +9,8 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.event.dispatcher');
-
 // Load the ElasticSearch Conf.
-require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/config.php';
+JLoader::register('ElasticSearchConfig', JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/config.php');
 
 /**
  * Adapter class for ElasticSearch plugins. 
@@ -93,6 +91,13 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	// Mapping of the type
 	private $mapping;
 
+	/**
+	 * Exclude contents of the _source field after the document has been indexed, but before the _source field is stored
+	 *
+	 * @var   array
+	 * @since 1.0
+	 * @link  https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-source-field.html#include-exclude
+	 */
 	private $sourceExcludes;
 
 	private $documents = array();
@@ -345,9 +350,15 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	{
 		$mapping = $this->elasticaIndex->getMapping();
 
-		foreach($mapping[ElasticSearchConfig::getIndexName()] as $key => $map)
+		// If we haven't indexed before mappings don't exist. So return false.
+		if (empty($mapping))
 		{
-			if($key==$type)
+			return false;
+		}
+
+		foreach ($mapping[ElasticSearchConfig::getIndexName()] as $key => $map)
+		{
+			if ($key==$type)
 			{
 				return true;
 			}
@@ -365,33 +376,33 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 protected function mapping()
 	 {
 		 // Set mapping only if mapping is set and if type does not exist
-		 if($this->mapping&&!$this->typeExist($this->current_type))
+		 if ($this->mapping && !$this->typeExist($this->current_type))
 		 {
-		 	$ESmapping = new \Elastica\Type\Mapping();
-		 	$ESmapping->setType($this->elasticaType);
+		 	$ESmapping = new \Elastica\Type\Mapping($this->elasticaType, $this->mapping);
 
-			//If Language supported by ES
-			if (array_key_exists($this->lang, $this->langAnalyzer)){
-		
-				$ESmapping->setParam("index_analyzer",$this->lang."_Analyzer");
-				$ESmapping->setParam("search_analyzer",$this->lang."_Analyzer");
-			}
-			else{
-				$ESmapping->setParam("index_analyzer","default");
-				$ESmapping->setParam("search_analyzer","default");
-			}
+//			// If Language supported by ES
+//			if (array_key_exists($this->lang, $this->langAnalyzer))
+//			{
+//				$ESmapping->setParam("index_analyzer", $this->lang . "_Analyzer");
+//				$ESmapping->setParam("search_analyzer", $this->lang . "_Analyzer");
+//			}
+//			else
+//			{
+//				$ESmapping->setParam("index_analyzer", "default");
+//				$ESmapping->setParam("search_analyzer", "default");
+//			}
+//
+//			if ($this->boost == "")
+//			{
+//				$this->boost = 1.0;
+//			}
+//
+//			$ESmapping->setParam('_boost', array('name' => 'boost', 'null_value' => $this->boost));
 
-			if($this->boost==""){
-				$this->boost=1.0;
-			}
-			$ESmapping->setParam('_boost', array('name' => 'boost', 'null_value' => $this->boost));
-
-			if($this->sourceExcludes){
+			if ($this->sourceExcludes)
+			{
 				$ESmapping->setSource(array('excludes' => $this->sourceExcludes));
 			}
-
-			// Set mapping
-			$ESmapping->setProperties($this->mapping);
 
 			// Send mapping to type
 			$ESmapping->send();
@@ -442,11 +453,10 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	protected function pushDocument($document)
 	{
-
 		// Get language if exists
-		$lang=($document->__isset('language')) ? $document->language : '*' ;
+		$lang = ($document->__isset('language')) ? $document->language : '*' ;
 
-		//Add boost field if does not exist
+		// Add boost field if does not exist
 		if (!$document->__isset('boost')&&$this->boost)
 		{
 			$document->set('boost',$this->boost);
@@ -456,16 +466,16 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		$explode = explode('-',$lang);
 		$lang = $explode[0];
 
-		// If it is the first of this language
+		// If it is the first of this language initialise array
 		if (!array_key_exists($lang, $this->documents))
 		{
-			$this->documents[$lang] = array(); // Init array
+			$this->documents[$lang] = array();
 		}
 
-		// add document to the list
+		// Add document to the list
 		$this->documents[$lang][] = $document;
-	
-		$mem_limit_bytes = trim(ini_get('memory_limit'))*1024*1024;
+
+		$mem_limit_bytes = trim(ini_get('memory_limit')) * 1024 * 1024;
 
 		// Check memory use
 		if (memory_get_usage() > $mem_limit_bytes*0.20)
@@ -484,14 +494,13 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	public function flushDocuments()
 	{
-		foreach($this->documents as $lang =>$list)
+		foreach ($this->documents as $lang =>$list)
 		{
 			$this->setLanguage($lang);
 			$this->addDocuments($list);
 			unset($this->documents[$lang]); // Delete array
 		}
 	}
-
 
 	/**
 	 * Add documents
@@ -504,10 +513,12 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	private function addDocuments(&$documents)
 	{
-		if(!$documents||sizeof($documents)==0){
+		if (!$documents || sizeof($documents)==0)
+		{
 			return;
 		}
-		// Create mapping if not exists
+
+		// Create mapping if it does not exist
 		$this->mapping();
 		
 		// Add article to type
@@ -618,23 +629,26 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	/**
 	 * Method called to display elements of ElasticSearch result
 	 * The view must be in the file elasticsearch/plg_name/view/type_name/default.php
+	 *
+	 * @param   string            $type        Result type
+	 * @param   \Elastica\Result  $data        The result to display
+	 * @param   string            $searchword  The searchword
 	 * 
-	 * @param   \Elastica\Result  $data  The data to display
-	 * 
-	 * @return string html display of the element
+	 * @return  string  Html display of the element
 	 *
 	 * @since  1.0
 	 */
-	public function onElasticSearchDisplay($type, $data){
-
+	public function onElasticSearchDisplay($type, $data, $searchword)
+	{
 		// Check the type
-		if($type!=$this->type){
-			return false;
+		if ($type != $this->type)
+		{
+			return '';
 		}
 		
 		$highlight = $this->smartHighlight($data);
 
-		$path = JPATH_SITE . '/plugins/elasticsearch/'.$type;
+		$path = JPATH_SITE . '/plugins/elasticsearch/' . $type;
 		
 		$view = new JViewLegacy(
 			array(
@@ -646,7 +660,10 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		// Pass data to the view
 		$view->assign('data', $data->getData());
 
+		$view->assign('searchword', $searchword);
+
 		$view->assign('highlight',$highlight);
+
 		// Pass type to the view
 		$view->assign('type', $type);
 		

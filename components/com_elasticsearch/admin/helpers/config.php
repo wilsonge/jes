@@ -18,6 +18,14 @@ defined('_JEXEC') or die('Restricted access');
  */
 class ElasticSearchConfig
 {
+	/**
+	 * Get the client object
+	 *
+	 * @var    \Elastica\Client
+	 * @since  1.0
+	 */
+	public static $elasticaClient;
+
 	public static function getHostServer()
 	{
 		return JComponentHelper::getParams('com_elasticsearch')->get('host');
@@ -34,7 +42,7 @@ class ElasticSearchConfig
 	}
 
 	/*
-	 * Get the official elastica library client
+	 * Get the elastica library client object
 	 *
 	 * @return \Elastica\Client
 	 *
@@ -42,10 +50,15 @@ class ElasticSearchConfig
 	 */
 	public static function getElasticSearchClient()
 	{
-		return new \Elastica\Client(array(
-			'host' => ElasticSearchConfig::getHostServer(),
-			'port' => ElasticSearchConfig::getPortServer()
-		));
+		if (!static::$elasticaClient)
+		{
+			static::$elasticaClient = new \Elastica\Client(array(
+				'host' => ElasticSearchConfig::getHostServer(),
+				'port' => ElasticSearchConfig::getPortServer()
+			));
+		}
+
+		return static::$elasticaClient;
 	}
 
 	/*

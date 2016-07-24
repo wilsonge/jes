@@ -10,8 +10,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// Load the ElasticSearch Conf.
-require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/config.php';
+JLoader::register('ElasticSearchConfig', JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/config.php');
 
 /**
  * Default model
@@ -21,34 +20,12 @@ require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/config
 class ElasticSearchModelDefault extends JModelItem
 {
 	/**
-	 * Client ElasticSearch
-	 *
-	 * @var    \Elastica\Client
-	 * @since  1.0
-	 */
-	protected $elasticaClient;
-
-	/**
 	 * The items returned from the search
 	 *
 	 * @var    array
 	 * @since  1.0
 	 */
 	protected $items;
-
-	/**
-	 * Constructor
-	 *
-	 * @param   array  $config  An array of configuration options (name, state, dbo, table_path, ignore_request).
-	 *
-	 * @since   1.0
-	 */
-	public function __construct($config = array())
-	{
-		$this->elasticaClient = ElasticSearchConfig::getElasticSearchClient();
-
-		parent::__construct($config);
-	}
 
 	/**
 	 * Check if the elastic search server is connected
@@ -61,7 +38,7 @@ class ElasticSearchModelDefault extends JModelItem
 	{
 		try
 		{
-			$this->elasticaClient->getStatus();
+			ElasticSearchConfig::getElasticSearchClient()->getStatus();
 		}
 		catch(Exception $e)
 		{
@@ -84,7 +61,7 @@ class ElasticSearchModelDefault extends JModelItem
 		{
 			$this->items = array();
 
-			$index = $this->elasticaClient->getIndex(ElasticSearchConfig::getIndexName());
+			$index = ElasticSearchConfig::getElasticSearchClient()->getIndex(ElasticSearchConfig::getIndexName());
 
 			if (!$index->exists())
 			{
@@ -95,17 +72,24 @@ class ElasticSearchModelDefault extends JModelItem
 			JPluginHelper::importPlugin('elasticsearch');
 			$types = JEventDispatcher::getInstance()->trigger('onElasticSearchType', array());
 
-			// Prepare an array index by type name
-			foreach($types as $type)
+			// Ensure that we have a published indexing plugin
+			if (empty($types))
 			{
-				$this->items[$type['type']] = array();
+				return $this->items;
 			}
 
 			$mapping = $index->getMapping();
 
+			// Ensure that we have run indexer to create mappings
 			if (empty($mapping))
 			{
 				return $this->items;
+			}
+
+			// Prepare an array index by type name
+			foreach($types as $type)
+			{
+				$this->items[$type['type']] = array();
 			}
 
 			//  Add language by type. Example : array('article' => array('en','fr'))

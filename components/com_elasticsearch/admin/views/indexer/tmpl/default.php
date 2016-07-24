@@ -6,19 +6,23 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
-?>
-<?php
-	// No direct access to this file
-	defined('_JEXEC') or die('Restricted Access');
+
+// No direct access to this file
+defined('_JEXEC') or die('Restricted Access');
 ?>
 
-<h2>Indexes updated :</h2>
+<h2><?php echo JText::_('COM_ELASTICSEARCH_INDEXES_UPDATED'); ?></h2>
 <ul>
 	<?php
-		foreach ($this->results as $result){
-			echo '<li>';
-			echo $result;
-			echo '</li>';
+		if (empty($this->results))
+		{
+			echo '<li>' . JText::_('COM_ELASTICSEARCH_NO_RESULTS_INDEXED') . '</li>';
+		}
+		else
+		{
+			foreach ($this->results as $result){
+				echo "<li>$result</li>";
+			}
 		}
 	?>
 

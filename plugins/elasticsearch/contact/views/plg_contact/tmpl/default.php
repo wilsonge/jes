@@ -16,7 +16,7 @@
 		<?php echo $this->escape($this->data['name']);?>
 	<?php endif; ?>
 </dt>
-<?php if ($this->categories) : ?>
+<?php if (isset($this->categories)) : ?>
 	<dd class="result-category">
 		<span class="small">
 			(<?php echo $this->escape($this->categories[0]); ?>)
@@ -24,14 +24,9 @@
 	</dd>
 <?php endif; ?>
 <dd class="result-text">
-	 <div style="
-    padding-top: 5;
-">
-	<div style="
-    float: left;
-    max-width: 15%;
-">
-	<img style="float: left; max-height: 60%; width: 70%;" src="https://cdn1.iconfinder.com/data/icons/humano2/128x128/apps/preferences-contact-list.png" />
+	<div style="padding-top: 5px;">
+		<div style="float: left; max-width: 15%;">
+			<img style="float: left; max-height: 60%; width: 70%;" src="https://cdn1.iconfinder.com/data/icons/humano2/128x128/apps/preferences-contact-list.png" />
 	</div>
 	<p> <?php echo $this->data['misc']; ?> </p>
 	</div>
