@@ -356,9 +356,9 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 			return false;
 		}
 
-		foreach ($mapping[ElasticSearchConfig::getIndexName()] as $key => $map)
+		foreach ($mapping as $key => $map)
 		{
-			if ($key==$type)
+			if ($key == $type)
 			{
 				return true;
 			}

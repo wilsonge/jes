@@ -5,7 +5,7 @@
  * @author Jean-Baptiste Cayrou and Adrien Gareau
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
-**/
+ **/
 
 // No direct access
 defined('_JEXEC') or die;
@@ -34,7 +34,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	protected $type = 'article';
 
 	/**
-	 * The type ElasticSearchto display
+	 * The type ElasticSearch to display
 	 *
 	 * @var    string
 	 * @since  1.0
@@ -55,28 +55,28 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 
 		// Set boost
 		$this->boost=$this->params->get('boost');
-		
+
 		// Doc here : http://www.elasticsearch.org/guide/reference/mapping/core-types/
 		$mapping= 	array(
-		    'id'      				 => array('type' => 'integer',
-											  'include_in_all' => FALSE,
-											  'index' => 'not_analyzed'),
+			'id'      				 => array('type' => 'integer',
+				'include_in_all' => FALSE,
+				'index' => 'not_analyzed'),
 			'title'    			 	 => array('type' => 'string',
-											  'include_in_all' => TRUE,
-											  'boost'=> 1.5),
+				'include_in_all' => TRUE,
+				'boost'=> 1.5),
 			'introtext'    			 => array('type' => 'string', 'include_in_all' => TRUE),
 			'fulltext'    			 => array('type' => 'string', 'include_in_all' => TRUE),
 			'created_by_alias'       => array('type' => 'string', 'include_in_all' => TRUE),
 			'categories' 			 => array('type' => 'string', 'include_in_all' => TRUE),
-			'language' 				 => array('type' => 'string', 
-											  'include_in_all' => FALSE,
-											  'index' => 'not_analyzed'),
+			'language' 				 => array('type' => 'string',
+				'include_in_all' => FALSE,
+				'index' => 'not_analyzed'),
 			'href'   				 => array('type' => 'string', 'include_in_all' => FALSE),
 			'created_at'  			 => array('type' => 'date', 'include_in_all' => FALSE),
 			'feature'			 	 => array('type' => 'integer', 'include_in_all' => FALSE),
 			'boost' 				 => array('type' => 'float', 'include_in_all' => FALSE),
-			);
-		
+		);
+
 		$this->setMapping($mapping);
 	}
 
@@ -84,12 +84,12 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	 * Method to remove an article in ElasticSearch when it is deleted
 	 *
 	 * @param   string  $context  The context of the action being performed.
-	 * @param   JTable  $data    A JTable object containing the record to be deleted
+	 * @param   JTable  $table    A JTable object containing the record to be deleted
 	 *
 	 * @return  boolean  True on success.
 	 * @since   1.0
 	 */
-	public function onElasticSearchAfterDelete($context, $data)
+	public function onElasticSearchAfterDelete($context, $table)
 	{
 		// Skip plugin if we are deleting something other than article
 		if ($context != 'com_content.article')
@@ -97,8 +97,8 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 			return false;
 		}
 
-		$this->delete($data->id);
-		
+		$this->delete($table->id);
+
 		return true;
 	}
 
@@ -122,8 +122,8 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 			return true;
 		}
 
-		//Delete the document in elasticsearch (if language changed)
-		$this->delete($id = $row->id);
+		// Delete the document in elasticsearch (if language changed)
+		$this->delete($row->id);
 
 		// If this article is published
 		if($row->state == 1)
@@ -134,7 +134,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 
 		return true;
 	}
-	
+
 	/**
 	 * ElasticSearch change state content method
 	 * Method to update the link information for items that have been changed
@@ -148,7 +148,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	 * @return  void
 	 *
 	 * @since   1.0
-	 */	
+	 */
 	public function onElasticSearchChangeState($context, $pks, $value)
 	{
 		// Skip plugin if we are saving something other than article
@@ -156,7 +156,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 		{
 			return;
 		}
-		
+
 		// Get all articles modifies
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -165,7 +165,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 		$query->where('c.id IN ('.implode(',',$pks).')');
 		$db->setQuery((string)$query);
 		$articles = $db->loadObjectList();
-		
+
 		foreach($articles as $article)
 		{
 			$this->delete($article->id);
@@ -209,6 +209,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 
 		// Create a document
 		$entity = array(
+			'id'               => $id,
 			'title'            => html_entity_decode(strip_tags($row->title), ENT_COMPAT | ENT_HTML401,'UTF-8'),
 			'introtext'        => html_entity_decode(strip_tags($row->introtext), ENT_COMPAT | ENT_HTML401,'UTF-8'),
 			'fulltext'         => html_entity_decode(strip_tags($row->fulltext), ENT_COMPAT | ENT_HTML401,'UTF-8'),
@@ -227,7 +228,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 
 	/**
 	 * Method called to index all contents
-	 * 
+	 *
 	 * @param   array  $types  The array of types
 	 *
 	 * @return  string  The elastic type to display
@@ -238,15 +239,15 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 	{
 		// Get all articles
 		$db = JFactory::getDbo();
-		
+
 		$query = $db->getQuery(true);
 		$query->select('*');
 		$query->from($db->quoteName('#__content'));
 		$db->setQuery($query);
 		$articles = $db->loadObjectList();
 
-        foreach ($articles as $article)
-        {
+		foreach ($articles as $article)
+		{
 			// If this article is published
 			if ($article->state == 1)
 			{
@@ -259,10 +260,10 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 
 		return $this->type_display;
 	}
-	
+
 	/**
 	 * Return the type of content
-	 * 
+	 *
 	 * @return  array
 	 * @since   1.0
 	 */
@@ -271,7 +272,7 @@ class PlgElasticsearchArticle extends ElasticSearchIndexerAdapter
 		$infoType=array();
 		$infoType['type'] = $this->type;
 		$infoType['type_display'] = $this->type_display;
-		
+
 		return $infoType;
 	}
 }
