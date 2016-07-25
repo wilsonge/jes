@@ -33,17 +33,15 @@ defined('_JEXEC') or die('Restricted access');
 
 		<?php if ($this->areas) : ?>
 			<fieldset class="only">
-			<legend><?php echo JText::_('COM_SEARCH_SEARCH_ONLY');?></legend>
-			<?php foreach ($this->areas as $area) :
-				$val = $area['type_display'];
-				echo $val;
-				//$checked = is_array($this->areas['type']) && in_array($val, $this->areas['active']) ? 'checked="checked"' : '';
-			?>
-			<input type="checkbox" name="<?php echo $area['type'];?>" value="<?php echo $val;?>" id="area-<?php echo $val;?>" />
-				<label for="area-<?php echo $val;?>">
-					<?php //echo JText::_($txt); ?>
-				</label>
-			<?php endforeach; ?>
+				<legend><?php echo JText::_('COM_SEARCH_SEARCH_ONLY');?></legend>
+				<?php foreach ($this->areas as $area) :
+					$checked = is_array($this->active_areas) && in_array($area['type'], $this->active_areas) ? 'checked="checked"' : '';
+					?>
+					<label for="area-<?php echo $area['type'];?>" class="checkbox">
+						<input type="checkbox" name="areas[]" value="<?php echo $area['type']?>" id="area-<?php echo $area['type'];?>" <?php echo $checked;?> >
+						<?php echo $area['type_display']; ?>
+					</label>
+				<?php endforeach; ?>
 			</fieldset>
 		<?php endif; ?>
 

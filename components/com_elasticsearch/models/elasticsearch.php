@@ -58,8 +58,14 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 	 * @since  1.0
 	 */
 	protected $areas;
-	
-	protected $elements = array();
+
+	/**
+	 * Areas currently actively searched by (none means search all areas)
+	 *
+	 * @var    string[]
+	 * @since  1.0
+	 */
+	protected $active_areas;
 
 	public function __construct($config = array())
 	{
@@ -74,12 +80,13 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 		$app = JFactory::getApplication();
 		$this->setState('limit', $app->getUserStateFromRequest('com_elasticsearch.limit', 'limit', $app->get('list_limit'), 'uint'));
 		$this->setState('limitstart', $app->input->get('limitstart', 0, 'uint'));
+		$this->active_areas = $app->input->get('areas', array(), 'array');
 	}
 
 	/**
 	 * Method to get the different types enabled in plugins
 	 *
-	 * @return  string[]  Array format of array( 0 => Array('type'=>'foo','type_display'=>'bar') ....)
+	 * @return  array  Array format of array( 0 => Array('type'=>'foo','type_display'=>'bar') ....)
 	 *
 	 * @since  1.0
 	 */
@@ -92,6 +99,18 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 		}
 
 		return $this->areas;
+	}
+
+	/**
+	 * Method to get the active filter types
+	 *
+	 * @return  string[]
+	 *
+	 * @since  1.0
+	 */
+	public function getActiveSearchAreas()
+	{
+		return $this->active_areas;
 	}
 
 	/**
@@ -256,11 +275,6 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 		$this->totalHits = $elasticaResultSet->getTotalHits();
 	}
 
-	public function getHighlightElem()
-	{
-		return $this->elements;
-	}
-
 	/**
 	 * Gets the number of results from the search query
 	 *
@@ -306,13 +320,13 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 		$joomlaLangTag = JFactory::getLanguage()->getTag();
 
 		//  Foreach existing ES types
-		foreach ($plgTypes as $area )
+		foreach ($plgTypes as $area)
 		{
 			// Check if this type is enable for the search
-			$check = JFactory::getApplication()->input->get->getString($area['type'], '');
+			$check = in_array($area['type'], $this->active_areas);
 
 			// If enabled
-			if (!empty($check))
+			if ($check)
 			{
 				$all_types = false;
 

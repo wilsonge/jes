@@ -62,6 +62,14 @@ class ElasticSearchViewElasticSearch extends JViewLegacy
 	public $areas;
 
 	/**
+	 * The actively filtered search areas
+	 *
+	 * @var   array
+	 * @since 2.0
+	 */
+	public $active_areas;
+
+	/**
 	 * Execute and display a template script.
 	 *
 	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
@@ -139,6 +147,7 @@ class ElasticSearchViewElasticSearch extends JViewLegacy
 
 		// Get search areas to limit search on selected types
 		$this->areas = $model->getSearchAreas();
+		$this->active_areas = $model->getActiveSearchAreas();
 
 		$this->totalResults=0;
 
