@@ -36,18 +36,19 @@ $categories = explode(';',$this->data['categories']);
 
 		if (isset($this->highlight['introtext']))
 		{
-			echo ElasticSearchHelper::truncateHighLight($this->highlight['introtext'],200);
+			$text=SearchHelper::prepareSearchContent($this->data['introtext'], $this->searchword);
+			echo JHtmlString::truncate($text, 500, true, false);
 		}
 		else
 		{
 			if (isset($this->highlight['fulltext']))
 			{
-				echo ElasticSearchHelper::truncateHighLight($this->highlight['fulltext'],500);
+				$text=SearchHelper::prepareSearchContent($this->data['fulltext'], $this->searchword);
+				echo JHtmlString::truncate($text, 500, true, false);
 			}
 			else
 			{
-				$text=SearchHelper::prepareSearchContent($this->data['introtext'], $this->searchword);
-				echo JHtmlString::truncate($text,500,true,false);
+				echo JHtmlString::truncate($this->data['introtext'], 500, true, false);
 			}
 		}
 	?>

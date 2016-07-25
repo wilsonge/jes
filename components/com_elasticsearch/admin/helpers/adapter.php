@@ -421,8 +421,8 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	protected function addDocument($document)
 	{
-		// Auto dectect the language of the document zith the field language
-		$lang=($document->__isset('language')) ? $document->language : '*' ;
+		// Auto detect the language of the document with the field language
+		$lang = ($document->__isset('language')) ? $document->language : '*' ;
 
 		//Add boost field if does not exist
 		if (!$document->__isset('boost')){
@@ -453,7 +453,7 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	protected function pushDocument($document)
 	{
-		// Get language if exists
+		// Auto detect the language of the document with the field language
 		$lang = ($document->__isset('language')) ? $document->language : '*' ;
 
 		// Add boost field if does not exist
@@ -539,7 +539,7 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	{
 		$queryTerm = new \Elastica\Query\Terms();
 		$queryTerm->setTerms('_id', array($id));
-		$elasticaFilterType = new \Elastica\Filter\Type($type);
+		$elasticaFilterType = new \Elastica\Query\Type($type);
 		$query = Elastica\Query::create($queryTerm);
 		$query->setFilter($elasticaFilterType);
 
@@ -601,9 +601,9 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		$smart = array();
 
 		// Get all field elasticsearch
-		foreach($this->mapping as $field=>$map)
+		foreach ($this->mapping as $field => $map)
 		{
-			if(array_key_exists($field, $highlights))
+			if (array_key_exists($field, $highlights))
 			{
 				// Get the first element because sort by score
 				$text = $highlights[$field][0];
@@ -612,14 +612,13 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 				$text = preg_replace('/{.+?}/', '', $text);
 
 				// It is not the beginning
-				if(substr_compare($data[$field],strip_tags($text),0,5))
+				if (substr_compare($data[$field], strip_tags($text), 0, 5))
 				{
-					$smart[$field]='... '.$text;
+					$smart[$field] = '... '.$text;
 				}
 				else{
-					$smart[$field]=$text;
+					$smart[$field] = $text;
 				}
-				
 			}
 		}
 

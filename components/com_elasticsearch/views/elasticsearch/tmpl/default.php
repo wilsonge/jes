@@ -6,10 +6,12 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
-?>
-<?php
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
+
+/** @var ElasticSearchViewElasticSearch $this */
+
 ?>
 <form id="searchForm" action="<?php echo JRoute::_('index.php?option=com_elasticsearch');?>" method="get">
 
@@ -20,6 +22,11 @@ defined('_JEXEC') or die('Restricted access');
 		<input type="text" name="searchword" id="search-searchword" size="30" maxlength="1000" value="<?php echo $this->searchword; ?>" class="inputbox" />
 		<button name="Search" onclick="this.form.submit()" class="button"><?php echo JText::_('COM_SEARCH_SEARCH');?></button>		
 	</fieldset>
+	<div class="searchintro">
+		<?php if (!empty($this->searchword)):?>
+			<p><?php echo JText::plural('COM_ELASTICSEARCH_SEARCH_KEYWORD_N_RESULTS', '<span class="badge badge-info">' . $this->totalResults . '</span>');?></p>
+		<?php endif;?>
+	</div>
 
 	<?php if ($this->areas) : ?>
 		<fieldset class="only">
@@ -53,9 +60,8 @@ defined('_JEXEC') or die('Restricted access');
 
 </form>
 
-	<?php
-	 if ($this->totalResults > 0) :
-			echo $this->loadTemplate('results');
-		  else :
-	endif; ?>
+<?php
+if ($this->totalResults > 0) :
+	echo $this->loadTemplate('results');
+endif; ?>
 

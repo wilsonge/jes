@@ -123,6 +123,8 @@ class ElasticSearchModelElasticSearch extends JModelItem
 	/**
 	 * Main method to make a search
 	 *
+	 * @return   void
+	 *
 	 * @since  1.0
 	 */
 	public function search()
@@ -227,13 +229,26 @@ class ElasticSearchModelElasticSearch extends JModelItem
 	{
 		return $this->elements;
 	}
-		
+
+	/**
+	 * Gets the number of results from the search query
+	 *
+	 * @return \Elastica\Result[]
+	 *
+	 * @since  1.0
+	 */
 	public function getResults()
 	{
 		return $this->results;
 	}
 
-
+	/**
+	 * Returns the total number of found hits.
+	 *
+	 * @return  int Total hits
+	 *
+	 * @since   1.0
+	 */
 	public function getTotalHits()
 	{
 		return $this->totalHits;
@@ -252,8 +267,6 @@ class ElasticSearchModelElasticSearch extends JModelItem
 	 */
 	private function createFilterTypes($plgTypes)
 	{
-		$types = array();
-
 		// By default search in all types
 		$all_types=true;
 

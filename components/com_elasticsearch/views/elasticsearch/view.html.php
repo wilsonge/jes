@@ -12,7 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
 
-require_once JPATH_ADMINISTRATOR.'/components/com_elasticsearch/helpers/render.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_elasticsearch/helpers/render.php';
 
 /**
  * HTML View class for the ElasticSearch Component
@@ -21,7 +21,55 @@ require_once JPATH_ADMINISTRATOR.'/components/com_elasticsearch/helpers/render.p
  */
 class ElasticSearchViewElasticSearch extends JViewLegacy
 {
-	// Overwriting JView display method
+	/**
+	 * The word the user has searched for
+	 *
+	 * @var   string
+	 * @since 1.0
+	 */
+	public $searchword;
+
+	/**
+	 * The number of results for the query
+	 *
+	 * @var   int
+	 * @since 1.0
+	 */
+	public $totalResults;
+
+	/**
+	 * The Joomla pagination object for the results
+	 *
+	 * @var   JPagination
+	 * @since 1.0
+	 */
+	public $pagination;
+
+	/**
+	 * The elastica result objects for the search
+	 *
+	 * @var   \Elastica\Result[]
+	 * @since 1.0
+	 */
+	public $results;
+
+	/**
+	 * The search areas
+	 *
+	 * @var   array
+	 * @since 1.0
+	 */
+	public $areas;
+
+	/**
+	 * Execute and display a template script.
+	 *
+	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+	 *
+	 * @return  mixed  A string if successful, otherwise an Error object.
+	 *
+	 * @since   1.0
+	 */
 	public function display($tpl = null)
 	{
 		// TODO: Load this in our own language file
@@ -32,8 +80,9 @@ class ElasticSearchViewElasticSearch extends JViewLegacy
 		$params = $app->getParams();
 		$menus	= $app->getMenu();
 		$menu	= $menus->getActive();
+
+		/** @var ElasticSearchModelElasticSearch $model */
 		$model = $this->getModel();
-		$this->elements=array();
 
 		// Because the application sets a default page title, we need to get it
 		// right from the menu item itself
@@ -95,8 +144,8 @@ class ElasticSearchViewElasticSearch extends JViewLegacy
 
 		$this->totalResults=0;
 
-		// Search only if searchword or start GET parameter exists
-		if($this->searchword || isset($_GET['start']) || isset($_GET['limitstart']))
+		// Search only if search word or start GET parameter exists
+		if ($this->searchword || $input->get->getInt('start', null) || $input->get->getInt('limitstart', null))
 		{
 			//Call the model to make the search and get results and the number of it
 			$model->search();
@@ -105,7 +154,7 @@ class ElasticSearchViewElasticSearch extends JViewLegacy
 		}
 
 		//Pagination : utiliser splice pour couper l'array en plusieurs parties
-		$this->pagination = new JPagination($this->totalResults,$offset,$limit);
+		$this->pagination = new JPagination($this->totalResults, $offset, $limit);
 
 		// Display the view
 		return parent::display($tpl);
