@@ -73,5 +73,5 @@ We call $REP path where is saved this repository and $SITE, root path of your Jo
 
 ###Documentation
 
-Guides for administrators and developers are available here : https://crim-ca.github.com/jes
+Guides for administrators and developers are available here : https://wilsonge.github.com/jes
 
