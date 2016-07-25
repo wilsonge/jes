@@ -19,7 +19,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_search/helpers/search.php';
  * This model makes all search request to ElasticSearch.
  *
  */
-class ElasticSearchModelElasticSearch extends JModelItem
+class ElasticSearchModelElasticSearch extends JModelLegacy
 {
 	/**
 	 * Client ElasticSearch
@@ -44,6 +44,14 @@ class ElasticSearchModelElasticSearch extends JModelItem
 	protected $totalHits;
 
 	/**
+	 * Pagination object
+	 *
+	 * @var    JPagination
+	 * @since  1.0
+	 */
+	protected $pagination = null;
+
+	/**
 	 * Plugin types from the onElasticSearchType event
 	 *
 	 * @var    string[]
@@ -62,6 +70,10 @@ class ElasticSearchModelElasticSearch extends JModelItem
 
 		// Set Index
 		$this->elasticaIndex = $this->elasticaClient->getIndex(ElasticSearchConfig::getIndexName());
+
+		$app = JFactory::getApplication();
+		$this->setState('limit', $app->getUserStateFromRequest('com_elasticsearch.limit', 'limit', $app->get('list_limit'), 'uint'));
+		$this->setState('limitstart', $app->input->get('limitstart', 0, 'uint'));
 	}
 
 	/**
@@ -80,6 +92,24 @@ class ElasticSearchModelElasticSearch extends JModelItem
 		}
 
 		return $this->areas;
+	}
+
+	/**
+	 * Method to get a pagination object of the weblink items for the category
+	 *
+	 * @return  JPagination
+	 *
+	 * @since   2.0
+	 */
+	public function getPagination()
+	{
+		// Lets load the content if it doesn't already exist
+		if (empty($this->pagination))
+		{
+			$this->pagination = new JPagination($this->totalHits, $this->getState('limitstart'), $this->getState('limit'));
+		}
+
+		return $this->pagination;
 	}
 
 	/**
@@ -136,12 +166,10 @@ class ElasticSearchModelElasticSearch extends JModelItem
 		$limit = $input->get->getInt('limit', 10);
 
 		// No limit
-		if($limit==0)
+		if ($limit == 0)
 		{
 			$limit=10000;
 		}
-
-		$elasticaQueryString = new \Elastica\Query\QueryString();
 
 		// Log search word only on the first page
 		if ($offset == 0)
@@ -156,7 +184,7 @@ class ElasticSearchModelElasticSearch extends JModelItem
 		$word = preg_replace('#\&[^;]+\;#','', $word);
 
 		// Check if there are quotes ( for exact search )
-		$exactSearch=false;
+		$exactSearch = false;
 
 		if (strlen($word) > 1 && $word[0]=='"' && $word[strlen($word)-1] == '"')
 		{
@@ -176,20 +204,17 @@ class ElasticSearchModelElasticSearch extends JModelItem
 			$word= "*";
 		}
 
-		$elasticaQueryString->setQuery($word);
-
 		// Create the actual search object with some data.
 		$elasticaQuery = new Elastica\Query();
-		$elasticaQuery->setQuery($elasticaQueryString);
 
 		if (ElasticSearchConfig::getHighlightEnable())
 		{
 			$fields= $this->getHighlightFields();
-
 			$hlfields=array();
-			foreach($fields as $field)
+
+			foreach ($fields as $field)
 			{
-				foreach($field as $highlight)
+				foreach ($field as $highlight)
 				{
 					$hlfields[] = array(
 						$highlight => array(
@@ -216,6 +241,11 @@ class ElasticSearchModelElasticSearch extends JModelItem
 
 		// Add filter to the search object.
 		$elasticaQuery->setPostFilter($this->createFilterTypes($this->getSearchAreas()));
+		$functionScore = new \Elastica\Query\FunctionScore();
+		$functionScore->addFieldValueFactorFunction('boost');
+		$functionScore->setScoreMode(\Elastica\Query\FunctionScore::SCORE_MODE_MULTIPLY);
+		$functionScore->setQuery(new \Elastica\Query\QueryString($word));
+		$elasticaQuery->setQuery($functionScore);
 
 		// Search on the index.
 		$elasticaResultSet = $this->elasticaIndex->search($elasticaQuery);

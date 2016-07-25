@@ -101,10 +101,10 @@ class ElasticSearchModelDefault extends JModelItem
 			// Boost
 			$boosts = array();
 
-			foreach($mapping[ElasticSearchConfig::getIndexName()] as $key => $map)
+			foreach($mapping as $key => $map)
 			{
 				$elasticType= $index->getType($key);
-				$mapping = $elasticType->getMapping();
+				$typeMapping = $elasticType->getMapping();
 				$pos= strrpos($key,'_');
 
 				// TODO: Fix boosts - it's totally broken at the moment
@@ -119,11 +119,11 @@ class ElasticSearchModelDefault extends JModelItem
 					$sum = (array_key_exists($type_base, $counts)) ? $counts[$type_base] : 0;
 					$counts[$type_base] = $sum + $elasticType->count('');
 
-					//$boosts[$type_base] = $mapping[$key]["_boost"]["null_value"];
+					//$boosts[$type_base] = $typeMapping[$key]["_boost"]["null_value"];
 				}
 				else
 				{
-					//$boosts[$key] = $mapping[$key]["_boost"]["null_value"];
+					//$boosts[$key] = $typeMapping[$key]["_boost"]["null_value"];
 				}
 			}
 

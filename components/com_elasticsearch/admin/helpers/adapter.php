@@ -294,7 +294,7 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		foreach ($Jlang->getKnownLanguages() as $key => $knownLang)
 		{
 			// Check if $lang is a key else look into local list
-			if($key==$lang || in_array($lang, explode(", ",$knownLang["locale"])))
+			if($key == $lang || in_array($lang, explode(", ",$knownLang["locale"])))
 			{
 				// Slip to get the first part. en-GB becomes en
 				$lang = explode('-',$key);
@@ -453,14 +453,14 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	protected function pushDocument($document)
 	{
-		// Auto detect the language of the document with the field language
-		$lang = ($document->__isset('language')) ? $document->language : '*' ;
-
 		// Add boost field if does not exist
-		if (!$document->__isset('boost')&&$this->boost)
+		if (!isset($document->boost) && $this->boost)
 		{
-			$document->set('boost',$this->boost);
+			$document->set('boost', $this->boost);
 		}
+
+		// Auto detect the language of the document with the field language
+		$lang = (isset($document->language)) ? $document->language : '*' ;
 
 		// Extract the first letter of the langue (en for en-GB)
 		$explode = explode('-',$lang);
@@ -478,7 +478,7 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		$mem_limit_bytes = trim(ini_get('memory_limit')) * 1024 * 1024;
 
 		// Check memory use
-		if (memory_get_usage() > $mem_limit_bytes*0.20)
+		if (memory_get_usage() > $mem_limit_bytes * 0.20)
 		{
 			// If documents array is too big we flush it
 			$this->flushDocuments();
@@ -546,7 +546,7 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		// Perform the search
 		$count = $this->elasticaIndex->count($query);
 
-		return ($count>0) ? true : false;
+		return ($count > 0) ? true : false;
 	}
 
 	/**

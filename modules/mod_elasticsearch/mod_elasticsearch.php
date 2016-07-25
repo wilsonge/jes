@@ -45,6 +45,6 @@ if ($imagebutton)
 	$img = ModSearchHelper::getSearchImage($button_text);
 }
 
-$mitemid = $set_Itemid > 0 ? $set_Itemid : JRequest::getInt('Itemid');
+$mitemid = $set_Itemid > 0 ? $set_Itemid : $app->input->getInt('Itemid');
 
 require JModuleHelper::getLayoutPath('mod_elasticsearch', $params->get('layout', 'default'));

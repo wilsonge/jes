@@ -22,7 +22,6 @@ defined('_JEXEC') or die('Restricted access');
 		<div class="btn-group pull-left">
 			<button name="Search" onclick="this.form.submit()" class="btn" title="" data-original-title="Search"><span class="icon-search"></span><?php echo JText::_('COM_SEARCH_SEARCH');?></button>
 		</div>
-		<input type="hidden" name="task" value="search">
 		<div class="clearfix"></div>
 	</div>
 	<div class="searchintro">

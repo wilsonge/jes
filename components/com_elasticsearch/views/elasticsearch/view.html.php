@@ -135,8 +135,6 @@ class ElasticSearchViewElasticSearch extends JViewLegacy
 		$input = JFactory::getApplication()->input;
 
 		// Get the offset and the limit for pagination
-		$offset = $input->get->getInt('start',0);
-		$limit = $input->get->getInt('limit', 10);
 		$this->searchword = $input->get->getString('searchword', null);
 
 		// Get search areas to limit search on selected types
@@ -154,7 +152,7 @@ class ElasticSearchViewElasticSearch extends JViewLegacy
 		}
 
 		//Pagination : utiliser splice pour couper l'array en plusieurs parties
-		$this->pagination = new JPagination($this->totalResults, $offset, $limit);
+		$this->pagination = $model->getPagination();
 
 		// Display the view
 		return parent::display($tpl);
