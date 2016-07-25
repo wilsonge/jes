@@ -15,13 +15,16 @@ defined('_JEXEC') or die('Restricted access');
 ?>
 <form id="searchForm" action="<?php echo JRoute::_('index.php?option=com_elasticsearch');?>" method="get">
 
-	<fieldset class="word">
-		<label for="search-searchword">
-			<?php echo JText::_('COM_SEARCH_SEARCH'); ?>
-		</label>
-		<input type="text" name="searchword" id="search-searchword" size="30" maxlength="1000" value="<?php echo $this->searchword; ?>" class="inputbox" />
-		<button name="Search" onclick="this.form.submit()" class="button"><?php echo JText::_('COM_SEARCH_SEARCH');?></button>		
-	</fieldset>
+	<div class="btn-toolbar">
+		<div class="btn-group pull-left">
+			<input type="text" name="searchword" placeholder="<?php echo JText::_('COM_ELASTICSEARCH_SEARCH_KEYWORD'); ?>" id="search-searchword" size="30" maxlength="200" value="<?php echo $this->searchword; ?>" class="inputbox">
+		</div>
+		<div class="btn-group pull-left">
+			<button name="Search" onclick="this.form.submit()" class="btn" title="" data-original-title="Search"><span class="icon-search"></span><?php echo JText::_('COM_SEARCH_SEARCH');?></button>
+		</div>
+		<input type="hidden" name="task" value="search">
+		<div class="clearfix"></div>
+	</div>
 	<div class="searchintro">
 		<?php if (!empty($this->searchword)):?>
 			<p><?php echo JText::plural('COM_ELASTICSEARCH_SEARCH_KEYWORD_N_RESULTS', '<span class="badge badge-info">' . $this->totalResults . '</span>');?></p>
@@ -44,19 +47,19 @@ defined('_JEXEC') or die('Restricted access');
 		</fieldset>
 	<?php endif; ?>
 
-<?php if ($this->totalResults > 0) : ?>
-	<div class="form-limit">
-		<label for="limit">
-			<?php echo JText::_('JGLOBAL_DISPLAY_NUM'); ?>
-		</label>
-		<?php echo $this->pagination->getLimitBox(); ?>
-	</div>
-	
-	<p class="counter">
-		<?php echo $this->pagination->getPagesCounter(); ?>
-	</p>
-<?php endif; ?>
+	<?php if ($this->totalResults > 0) : ?>
 
+		<div class="form-limit">
+			<label for="limit">
+				<?php echo JText::_('JGLOBAL_DISPLAY_NUM'); ?>
+			</label>
+			<?php echo $this->pagination->getLimitBox(); ?>
+		</div>
+		<p class="counter">
+			<?php echo $this->pagination->getPagesCounter(); ?>
+		</p>
+
+	<?php endif; ?>
 
 </form>
 
@@ -64,4 +67,3 @@ defined('_JEXEC') or die('Restricted access');
 if ($this->totalResults > 0) :
 	echo $this->loadTemplate('results');
 endif; ?>
-
