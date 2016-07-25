@@ -89,7 +89,7 @@ class ElasticSearchHelper
 				$text='... '.$text;
 			}
 
-			return JHtmlString::truncate($text, $limit+4, true, true);
+			return JHtmlString::truncateComplex($text, $limit + 4, true);
 		}
 
 		return $text;

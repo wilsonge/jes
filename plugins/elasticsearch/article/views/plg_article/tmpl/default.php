@@ -36,15 +36,19 @@ $categories = explode(';',$this->data['categories']);
 
 		if (isset($this->highlight['introtext']))
 		{
-			$text=SearchHelper::prepareSearchContent($this->data['introtext'], $this->searchword);
-			echo JHtmlString::truncate($text, 500, true, false);
+			// What we want to use here is SearchHelper::prepareSearchContent - but then this strips out our
+			// own highlighting!!! (it uses strip_tags) - note all other tags got stripped out when we added
+			// the document
+			echo ElasticSearchHelper::truncateHighLight($this->highlight['introtext'], 500);
 		}
 		else
 		{
 			if (isset($this->highlight['fulltext']))
 			{
-				$text=SearchHelper::prepareSearchContent($this->data['fulltext'], $this->searchword);
-				echo JHtmlString::truncate($text, 500, true, false);
+				// What we want to use here is SearchHelper::prepareSearchContent - but then this strips out our
+				// own highlighting!!! (it uses strip_tags) - note all other tags got stripped out when we added
+				// the document
+				echo ElasticSearchHelper::truncateHighLight($this->highlight['fulltext'], 500);
 			}
 			else
 			{

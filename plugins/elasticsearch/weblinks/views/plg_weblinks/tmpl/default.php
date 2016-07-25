@@ -6,8 +6,7 @@
  * @copyright Copyright 2013 CRIM - Computer Research Institute of Montreal
  * @license GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
 **/
-?>
-<?php
+
 JLoader::register('JHtmlString', JPATH_LIBRARIES.'/joomla/html/html/string.php');
 require_once JPATH_ADMINISTRATOR.'/components/com_search/helpers/search.php';
 // Split categories
@@ -35,19 +34,17 @@ $categories = explode(';',$this->data['categories']);
 <dd class="result-text">
 	<?php 
 
-		if(isset($this->highlight['description'])){
-
-				echo ElasticSearchHelper::truncateHighLight($this->highlight['description'],200);
+		if (isset($this->highlight['description']))
+		{
+			// What we want to use here is SearchHelper::prepareSearchContent - but then this strips out our
+			// own highlighting!!! (it uses strip_tags) - note all other tags got stripped out when we added
+			// the document
+			echo ElasticSearchHelper::truncateHighLight($this->highlight['description'], 200);
 		}
-		else{
-			if(isset($this->highlight['description'])){
-				echo ElasticSearchHelper::truncateHighLight($this->highlight['description'],500);
-			}
-			else
-			{
-				$text=SearchHelper::prepareSearchContent($this->data['description'], $this->searchword);
-				echo JHtmlString::truncate($text,500,true,false);
-			}
+		else
+		{
+			$text=SearchHelper::prepareSearchContent($this->data['description'], $this->searchword);
+			echo JHtmlString::truncate($text,500,true,false);
 		}
 	?>
 </dd>

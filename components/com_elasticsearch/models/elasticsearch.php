@@ -229,7 +229,8 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 				'pre_tags' => array(ElasticSearchConfig::getHighlightPre()),
 				'post_tags' => array(ElasticSearchConfig::getHighlightPost()),
 				"order" => "score",
-				'fields'    => $hlfields
+				'fields'    => $hlfields,
+				"require_field_match" => false
 			);
 
 			$elasticaQuery->setHighlight($highlightFields);
