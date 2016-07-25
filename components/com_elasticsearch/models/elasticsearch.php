@@ -18,6 +18,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_search/helpers/search.php';
  * ElasticSearch Model
  * This model makes all search request to ElasticSearch.
  *
+ * @since  1.0
  */
 class ElasticSearchModelElasticSearch extends JModelLegacy
 {
@@ -37,10 +38,20 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 	 */
 	protected $elasticaIndex;
 
-	protected $searchFields;
-
+	/**
+	 * The results from the search query
+	 *
+	 * @var   \Elastica\Result[]
+	 * @since 1.0
+	 */
 	protected $results;
 
+	/**
+	 * The number of results from the query
+	 *
+	 * @var   int
+	 * @since 1.0
+	 */
 	protected $totalHits;
 
 	/**
@@ -132,31 +143,6 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 	}
 
 	/**
-	 * Method to get the different types which will be highlighted in enabled in plugins
-	 *
-	 * @return mixed
-	 *
-	 * @since version
-	 */
-	public function getSearchFields()
-	{
-		if(!$this->searchFields)
-		{
-			$this->searchField = array();
-
-			foreach ($this->getHighlightFields() as $fields)
-			{
-				foreach ($fields as $field)
-				{
-					$this->searchFields[] = $field;
-				}
-			}
-		}
-
-		return $this->searchFields;
-	}
-
-	/**
 	 * Request the plugins enabled to know what is fields we need to active the highlighting
 	 *
 	 * @since  1.0
@@ -178,7 +164,6 @@ class ElasticSearchModelElasticSearch extends JModelLegacy
 	 */
 	public function search()
 	{
-		$this->getSearchFields();
 		$input = JFactory::getApplication()->input;
 		$word = $input->get->getString('searchword', null);
 		$offset = $input->get->getInt('start', 0);

@@ -73,9 +73,9 @@ zip -r $ROOT_PATH/release/pkg_elasticsearch-$version.zip .
 
 echo 
 echo "#########################################################"
-echo "## ZIP Package has been created in release repertory ! ##"
+echo "## ZIP Package has been created in release directory ! ##"
 echo "#########################################################"
 echo 
 
-
-#rm -r $TMP_PATH
+# Clean up the temporary directory
+rm -r $TMP_PATH

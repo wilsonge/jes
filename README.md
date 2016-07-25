@@ -25,9 +25,9 @@ Here some features it provides:
 ##Build package
 
 
-It is easier to have separated repertories to develop but it is a little bit too long to create package install...  
-We have created a shell script named "create_package.sh" which compress and prepare a zip install package for Joomla!  
-Just execute `./create_package.sh` and the script will create a release repertory containing the package !
+It is easier to have separated repositories to develop but it is a little bit too long to create package install...  
+We have created a shell script named "create_package.sh" which compresses and prepare a zip install package for Joomla!  
+Just execute `./create_package.sh` and the script will create a release directory containing the package !
 
 
 

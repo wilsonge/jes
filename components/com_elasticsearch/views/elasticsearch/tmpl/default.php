@@ -21,7 +21,7 @@ defined('_JEXEC') or die('Restricted access');
 				<input type="text" name="searchword" placeholder="<?php echo JText::_('COM_ELASTICSEARCH_SEARCH_KEYWORD'); ?>" id="search-searchword" size="30" maxlength="200" value="<?php echo $this->searchword; ?>" class="inputbox">
 			</div>
 			<div class="btn-group pull-left">
-				<button name="Search" onclick="this.form.submit()" class="btn" title="" data-original-title="Search"><span class="icon-search"></span><?php echo JText::_('COM_SEARCH_SEARCH');?></button>
+				<button name="Search" type="submit" onclick="this.form.submit()" class="btn" title="" data-original-title="Search"><span class="icon-search"></span><?php echo JText::_('COM_SEARCH_SEARCH');?></button>
 			</div>
 			<div class="clearfix"></div>
 		</div>
