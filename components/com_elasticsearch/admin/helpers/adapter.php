@@ -44,7 +44,6 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	protected $boost = 1.0;
 
-
 	/**
 	 * The sublayout to use when rendering the results.
 	 *
