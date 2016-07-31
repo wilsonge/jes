@@ -44,7 +44,6 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	protected $boost = 1.0;
 
-
 	/**
 	 * The sublayout to use when rendering the results.
 	 *
@@ -84,11 +83,22 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 * @since 1.0
 	 */
 	private $elasticaIndex;
-	
-	// current type= $type_+lang
+
+	/**
+	 * The type with the language appended if not language all
+	 *
+	 * @var   string
+	 * @since 1.0
+	 */
 	private $current_type;
-	
-	// Mapping of the type
+
+	/**
+	 * The mapping for the current type
+	 *
+	 * @var   array
+	 * @since 1.0
+	 * @link  http://www.elasticsearch.org/guide/reference/mapping/core-types/
+	 */
 	private $mapping;
 
 	/**
@@ -100,6 +110,14 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 	 */
 	private $sourceExcludes;
 
+	/**
+	 * Internal store of documents to be added to elastic search with the flushDocuments method
+	 *
+	 * The format should be an array containing a key of the language containing an array of \Elastica\Document objects
+	 *
+	 * @var   array
+	 * @since 1.0
+	 */
 	private $documents = array();
 
 	/**
@@ -127,10 +145,10 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		'fr' => 'french',
 		'hu' => 'hungarian',
 		'it' => 'italian',
-		'nb' => 'Norwegian',
+		'nb' => 'norwegian',
 		'nl' => 'dutch',
 		'pt' => 'portuguese',
-		'ro' => 'Romanian',
+		'ro' => 'romanian',
 		'ru' => 'russian',
 		'sv' => 'swedish',
 		'tr' => 'turkish',
@@ -272,12 +290,7 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 			$this->elasticaIndex->create($indexMapping);
 		}
 	}
-	
-	private function changeType()
-	{
-		$this->elasticaType = $this->elasticaIndex->getType($this->current_type);
-	}
-	
+
 	/**
 	 * Search with the $lang parameter, the name of this language in Joomla
 	 *
@@ -328,24 +341,46 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		}
 
 		// Change current type
-		$this->changeType();
+		 $this->elasticaType = $this->elasticaIndex->getType($this->current_type);
 	 }
-	 
+
 	/**
 	 * Set a mapping for a type
 	 *
-	 * @since  1.0
+	 * @param   array  $mapping  The mapping for the type
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0
+	 * @link    http://www.elasticsearch.org/guide/reference/mapping/core-types/
 	 */
 	protected function setMapping($mapping)
 	{
 		$this->mapping=$mapping;
 	}
 
+	/**
+	 * Set any source excludes
+	 *
+	 * @param   array  $exclude  The sources to exclude
+	 *
+	 * @since 1.0
+	 * @link  https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-source-field.html#include-exclude
+	 */
 	protected function setSourceExclude($exclude)
 	{
 		$this->sourceExcludes = $exclude;
 	}
 
+	/**
+	 * Check if a given type exists
+	 *
+	 * @param   string  $type  Type to check for
+	 *
+	 * @return  bool
+	 *
+	 * @since   1.0
+	 */
 	protected function typeExist($type)
 	{
 		$mapping = $this->elasticaIndex->getMapping();
@@ -424,8 +459,9 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		// Auto detect the language of the document with the field language
 		$lang = ($document->__isset('language')) ? $document->language : '*' ;
 
-		//Add boost field if does not exist
-		if (!$document->__isset('boost')){
+		// Add boost field if does not exist
+		if (!$document->__isset('boost'))
+		{
 			$document->set('boost',$this->boost);
 		}
 
@@ -541,7 +577,7 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 		$queryTerm->setTerms('_id', array($id));
 		$elasticaFilterType = new \Elastica\Query\Type($type);
 		$query = Elastica\Query::create($queryTerm);
-		$query->setFilter($elasticaFilterType);
+		$query->setPostFilter($elasticaFilterType);
 
 		// Perform the search
 		$count = $this->elasticaIndex->count($query);
@@ -616,7 +652,8 @@ abstract class ElasticSearchIndexerAdapter extends JPlugin
 				{
 					$smart[$field] = '... '.$text;
 				}
-				else{
+				else
+				{
 					$smart[$field] = $text;
 				}
 			}
