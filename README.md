@@ -22,7 +22,7 @@ Here some features it provides:
 * PDF file can be easily indexed. You can attach a file to content and make search in that content.
 
 
-##Build package
+## Build package
 
 
 It is easier to have separated repositories to develop but it is a little bit too long to create package install...  
@@ -31,7 +31,7 @@ Just execute `./create_package.sh` and the script will create a release director
 
 
 
-##Installation
+## Installation
 
 In Joomla administration, upload the package to install it.
 You also need to activate these plugins:
@@ -47,7 +47,7 @@ ElasticSearch - Weblinks
 To work on this extension we advise you to create symbolic links for component and plugins.
 Some plugins are not likely to change, so creating symbolic links for them is useless.
 
-###Automatic
+### Automatic
 
 ** ElasticSearch package musts be installed **
 
@@ -58,7 +58,7 @@ The script will create symbolic links for com_elasticsearch component (site and 
 plugins installed.
 
 
-###Manual
+### Manual
 
 We call $REP path where is saved this repository and $SITE, root path of your Joomla! installation
 
@@ -71,7 +71,7 @@ We call $REP path where is saved this repository and $SITE, root path of your Jo
 
 `ln -s $REP/plugins/elasticsearch $SITE/plugins/`
 
-###Documentation
+### Documentation
 
 Guides for administrators and developers are available here : https://wilsonge.github.com/jes
 
